@@ -22,6 +22,7 @@
       "@components/*": ["components/*"],
       "@assets/*": ["assets/*"],
       "@pages/*": ["pages/*"],
+      "@firebase/*": ["firebase/*"],
     }
   },
   "include": ["src"],
