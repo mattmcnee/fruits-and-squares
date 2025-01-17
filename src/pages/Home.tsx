@@ -1,5 +1,5 @@
 import Navbar from "@components/ui/Navbar";
-import { useAuth } from '@firebase/useAuth';
+import { useAuth } from "@firebase/useAuth";
 import "./Page.scss";
 
 

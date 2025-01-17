@@ -1,7 +1,7 @@
-import { useEffect, useRef } from 'react';
-import { useAuth } from '@firebase/useAuth';
-import { useNavigate } from 'react-router-dom';
-import Navbar from '@components/ui/Navbar';
+import { useEffect, useRef } from "react";
+import { useAuth } from "@firebase/useAuth";
+import { useNavigate } from "react-router-dom";
+import Navbar from "@components/ui/Navbar";
 
 const LinkedInCallback = () => {
   const hasFetched = useRef(false);
@@ -15,7 +15,7 @@ const LinkedInCallback = () => {
     hasFetched.current = true;
 
     const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get('code');
+    const code = urlParams.get("code");
 
     if (code) {
       signInWithCode(code);

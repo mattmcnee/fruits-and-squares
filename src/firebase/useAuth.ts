@@ -33,8 +33,8 @@ export function useAuth() {
 
     try {
       const response = await fetch(`${FUNCTION_URL}/linkedinAuth`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ code }),
       });
 
@@ -48,14 +48,16 @@ export function useAuth() {
       }
     } catch (error) {
       console.error("Error fetching token from code:", error);
+      
       return null;
     }
-  }
+  };
 
   const signInWithCode = async (code: string): Promise<void> => {
     const token = await getTokenFromCode(code);
     if (!token) {
       console.error("Error fetching token from code");
+      
       return;
     }
     signInWithCustomToken(auth, token)
@@ -73,13 +75,14 @@ export function useAuth() {
     const AUTH_URL = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&scope=openid%20profile%20email`;
 
     window.location.href = AUTH_URL;
-  }
+  };
 
   // Logout user
   const logout = async (): Promise<SignInResponse> => {
     try {
       await signOut(auth);
       setUser(null);
+      
       return { status: "success", code: "" };
     } catch (error: any) {
       return { status: "error", code: error.code };

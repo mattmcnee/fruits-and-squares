@@ -1,5 +1,5 @@
-import LinkedInIcon from '/src/assets/linkedin-white.png';
-import './AuthButton.scss';
+import LinkedInIcon from "/src/assets/linkedin-white.png";
+import "./AuthButton.scss";
 
 interface AuthButtonProps {
   onClick: () => void;
@@ -12,6 +12,6 @@ const AuthButton = ({ onClick }: AuthButtonProps) => {
       <span className='auth-text'>Continue with LinkedIn</span>
     </button>
   );
-}
+};
 
 export default AuthButton;

@@ -140,6 +140,7 @@ const signupOrLogin = async (user: User): Promise<{ token: string; user: UserRec
     try {
       const userRecord: UserRecord = await getAuth().getUser(user.uid);
       const token = await getAuth().createCustomToken(userRecord.uid);
+      
       return { token, user: userRecord };
     } catch (error: any) {
       if (error.code === "auth/user-not-found") {
@@ -150,6 +151,7 @@ const signupOrLogin = async (user: User): Promise<{ token: string; user: UserRec
           photoURL: user.picture,
         });
         const token = await getAuth().createCustomToken(userRecord.uid);
+        
         return { token, user: userRecord };
       }
       throw error;
