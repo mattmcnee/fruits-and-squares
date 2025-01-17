@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "@firebase/useAuth";
 import "./Navbar.scss";
 
 import menuIcon from "/src/assets/menu.svg";
@@ -10,6 +11,7 @@ const Navbar = () => {
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const { user, logout } = useAuth();
   let title = "Fruits & Squares";
 
   useEffect(() => {
@@ -48,8 +50,13 @@ const Navbar = () => {
         )}
         <Link to="/beans/new" className="navbar-link" onClick={() => setIsMenuOpen(false)}>Beans</Link>
         <Link to="/mango/new" className="navbar-link" onClick={() => setIsMenuOpen(false)}>Mango</Link>
-        {!(location.pathname === "/signin" || location.pathname === "/signin/success") && (
-          <Link to="/signin" className="navbar-link" onClick={() => setIsMenuOpen(false)}>Sign In</Link>
+
+        {user ? (
+          <div className="navbar-link" onClick={() => { setIsMenuOpen(false); logout(); }}>Sign Out</div>
+        ) : (
+          !(location.pathname === "/signin" || location.pathname === "/signin/success") && (
+            <Link to="/signin" className="navbar-link" onClick={() => setIsMenuOpen(false)}>Sign In</Link>
+          )
         )}
       </>
     );

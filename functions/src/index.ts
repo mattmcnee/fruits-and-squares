@@ -4,8 +4,6 @@ const jwt = require("jsonwebtoken");
 const admin = require("firebase-admin");
 const cors = require("cors");
 const serviceAccount = require("./sa.key.json");
-
-// Firebase admin imports
 const { getAuth } = require("firebase-admin/auth");
 import type { UserRecord } from "firebase-admin/auth";
 
@@ -32,7 +30,7 @@ exports.linkedinAuth = functions.https.onRequest((req: any, res: any) => {
         return res.status(400).json({ error: "Missing authorization code" });
       }
 
-      // Step 1: Exchange authorization code for user details
+      // Step 1: Exchange authorization code for access and ID tokens
       const tokenResponse = await axios.post(
         "https://www.linkedin.com/oauth/v2/accessToken",
         new URLSearchParams({
@@ -49,10 +47,12 @@ exports.linkedinAuth = functions.https.onRequest((req: any, res: any) => {
         }
       );
 
-      // Step 2: Construct user object from LinkedIn details
       const idToken = tokenResponse.data.id_token;
-      const decodedIdToken = jwt.decode(idToken) as { [key: string]: any };
 
+      // Step 2: Verify the ID token's signature and claims
+      const decodedIdToken = await verifyLinkedInIdToken(idToken);
+
+      // Step 3: Construct user object from verified ID token
       const user: User = {
         email: decodedIdToken.email,
         name: decodedIdToken.given_name,
@@ -60,7 +60,7 @@ exports.linkedinAuth = functions.https.onRequest((req: any, res: any) => {
         uid: decodedIdToken.sub,
       };
 
-      // Step 3: Check if the user already exists in Firebase Auth
+      // Step 4: Check if the user already exists in Firebase Auth
       const { token, user: firebaseUser } = await signupOrLogin(user);
 
       return res.json({ token, user: firebaseUser });
@@ -86,18 +86,62 @@ exports.linkedinAuth = functions.https.onRequest((req: any, res: any) => {
   });
 });
 
+// Function to verify the LinkedIn ID token
+const verifyLinkedInIdToken = async (idToken: string): Promise<{ [key: string]: any }> => {
+  // Fetch LinkedIn's JWKS
+  const jwksResponse = await axios.get("https://www.linkedin.com/oauth/openid/jwks");
+  const jwks = jwksResponse.data.keys;
+
+  // Get the token's header to identify the key used for signing
+  const decodedHeader = jwt.decode(idToken, { complete: true })?.header;
+
+  if (!decodedHeader || !decodedHeader.kid) {
+    throw new Error("Invalid ID token: Missing or malformed header");
+  }
+
+  // Find the matching key in the JWKS
+  const jwk = jwks.find((key: any) => key.kid === decodedHeader.kid);
+
+  if (!jwk) {
+    throw new Error("Unable to find matching key in LinkedIn JWKS");
+  }
+
+  // Convert the JWK to a PEM format
+  const pem = jwkToPem(jwk);
+
+  // Verify the token using the PEM
+  const verifiedToken = jwt.verify(idToken, pem, {
+    algorithms: ["RS256"],
+    issuer: "https://www.linkedin.com",
+    audience: process.env.LINKEDIN_CLIENT_ID!,
+  });
+
+  return verifiedToken;
+};
+
+// Convert JWK to PEM
+const jwkToPem = (jwk: any): string => {
+  const { n, e } = jwk;
+  const modulus = Buffer.from(n, "base64");
+  const exponent = Buffer.from(e, "base64");
+
+  const modulusHex = modulus.toString("hex");
+  const exponentHex = exponent.toString("hex");
+
+  return `-----BEGIN RSA PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8A${modulusHex}
+AQAB${exponentHex}==
+-----END RSA PUBLIC KEY-----`;
+};
+
+// Function for Firebase signup or login
 const signupOrLogin = async (user: User): Promise<{ token: string; user: UserRecord }> => {
   try {
     try {
-      // Try to get the user first
       const userRecord: UserRecord = await getAuth().getUser(user.uid);
-
-      // User exists, create custom token
       const token = await getAuth().createCustomToken(userRecord.uid);
-
       return { token, user: userRecord };
     } catch (error: any) {
-      // User doesn't exist, create new user
       if (error.code === "auth/user-not-found") {
         const userRecord: UserRecord = await getAuth().createUser({
           uid: user.uid,
@@ -105,10 +149,7 @@ const signupOrLogin = async (user: User): Promise<{ token: string; user: UserRec
           displayName: user.name,
           photoURL: user.picture,
         });
-
-        // Create custom token for the new user
         const token = await getAuth().createCustomToken(userRecord.uid);
-
         return { token, user: userRecord };
       }
       throw error;
