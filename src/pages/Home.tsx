@@ -10,8 +10,8 @@ const Home = () => {
     <div>
       <Navbar />
       <div className='page-body'>
-        <h1>Welcome to Unlinked Games</h1>
-        <p>This is the homepage of our mobile games website.</p>
+        <h1>Welcome to Fruits & Squares</h1>
+        <p>This is the homepage of our games website.</p>
 
         {user && (
           <p>
