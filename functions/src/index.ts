@@ -1,6 +1,7 @@
 const axios = require("axios");
 const functions = require("firebase-functions");
 const jwt = require("jsonwebtoken");
+const jwkToPem = require("jwk-to-pem");
 const admin = require("firebase-admin");
 const cors = require("cors");
 const serviceAccount = require("./sa.key.json");
@@ -25,10 +26,12 @@ interface User {
 exports.linkedinAuth = functions.https.onRequest((req: any, res: any) => {
   corsHandler(req, res, async () => {
     try {
-      const { code } = req.body;
+      const { code, redirect } = req.body;
       if (!code) {
         return res.status(400).json({ error: "Missing authorization code" });
       }
+
+      console.warn("Received code:", code, redirect);
 
       // Step 1: Exchange authorization code for access and ID tokens
       const tokenResponse = await axios.post(
@@ -36,7 +39,7 @@ exports.linkedinAuth = functions.https.onRequest((req: any, res: any) => {
         new URLSearchParams({
           grant_type: "authorization_code",
           code,
-          redirect_uri: process.env.LINKEDIN_REDIRECT_URI!,
+          redirect_uri: redirect,
           client_id: process.env.LINKEDIN_CLIENT_ID!,
           client_secret: process.env.LINKEDIN_CLIENT_SECRET!,
         }).toString(),
@@ -88,6 +91,7 @@ exports.linkedinAuth = functions.https.onRequest((req: any, res: any) => {
 
 // Function to verify the LinkedIn ID token
 const verifyLinkedInIdToken = async (idToken: string): Promise<{ [key: string]: any }> => {
+
   // Fetch LinkedIn's JWKS
   const jwksResponse = await axios.get("https://www.linkedin.com/oauth/openid/jwks");
   const jwks = jwksResponse.data.keys;
@@ -112,26 +116,11 @@ const verifyLinkedInIdToken = async (idToken: string): Promise<{ [key: string]: 
   // Verify the token using the PEM
   const verifiedToken = jwt.verify(idToken, pem, {
     algorithms: ["RS256"],
-    issuer: "https://www.linkedin.com",
+    issuer: "https://www.linkedin.com/oauth",
     audience: process.env.LINKEDIN_CLIENT_ID!,
   });
-
+  
   return verifiedToken;
-};
-
-// Convert JWK to PEM
-const jwkToPem = (jwk: any): string => {
-  const { n, e } = jwk;
-  const modulus = Buffer.from(n, "base64");
-  const exponent = Buffer.from(e, "base64");
-
-  const modulusHex = modulus.toString("hex");
-  const exponentHex = exponent.toString("hex");
-
-  return `-----BEGIN RSA PUBLIC KEY-----
-MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8A${modulusHex}
-AQAB${exponentHex}==
------END RSA PUBLIC KEY-----`;
 };
 
 // Function for Firebase signup or login

@@ -16,6 +16,16 @@ export function useAuth() {
   const auth = getAuth(app);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const DEV_MODE = import.meta.env.MODE === 'development';
+
+  const REDIRECT_URI = DEV_MODE 
+    ? import.meta.env.VITE_DEV_LINKEDIN_REDIRECT_URI 
+    : import.meta.env.VITE_LINKEDIN_REDIRECT_URI;
+
+  const FUNCTION_URL = DEV_MODE
+    ? import.meta.env.VITE_DEV_FUNCTIONS_BASE_URL
+    : import.meta.env.VITE_FUNCTIONS_BASE_URL;
+
 
   // Listen for auth state changes and set state accordingly
   useEffect(() => {
@@ -29,13 +39,12 @@ export function useAuth() {
   }, [auth]);
 
   const getTokenFromCode = async (code: string): Promise<string | null> => {
-    const FUNCTION_URL = import.meta.env.VITE_FIREBASE_FUNCTION_BASE_URL;
 
     try {
       const response = await fetch(`${FUNCTION_URL}/linkedinAuth`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code }),
+        body: JSON.stringify({ code, redirect: REDIRECT_URI }),
       });
 
       const data = await response.json();
@@ -47,7 +56,7 @@ export function useAuth() {
         return null;
       }
     } catch (error) {
-      console.error("Error fetching token from code:", error);
+      console.warn("Failed to generate token from code");
       
       return null;
     }
@@ -56,7 +65,7 @@ export function useAuth() {
   const signInWithCode = async (code: string): Promise<void> => {
     const token = await getTokenFromCode(code);
     if (!token) {
-      console.error("Error fetching token from code");
+      console.warn("Error fetching token from code");
       
       return;
     }
@@ -71,7 +80,6 @@ export function useAuth() {
 
   const authenticateWithLinkedIn = async (): Promise<void> => {
     const CLIENT_ID = import.meta.env.VITE_LINKEDIN_CLIENT_ID;
-    const REDIRECT_URI = import.meta.env.VITE_LINKEDIN_REDIRECT_URI;
     const AUTH_URL = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&scope=openid%20profile%20email`;
 
     window.location.href = AUTH_URL;
