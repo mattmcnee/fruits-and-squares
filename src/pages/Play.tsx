@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import MangoGame from "@components/games/mango/MangoGame";
 import Navbar from "@components/ui/Navbar";
 import "@components/games/Games.scss";
-import { generateNewGameBoard, formatTimer } from "@components/games/gameUtils";
+import { getGameBoard, formatTimer } from "@components/games/gameUtils";
 import { useNavigate, useParams } from "react-router-dom";
 import { MangoBoard } from "@utils/types";
 
@@ -13,6 +13,7 @@ interface PlayProps {
 const Play = ({ type }: PlayProps) => {
   const { ref } = useParams();
   const hasFetched = useRef(false);
+  const prevRef = useRef<string | null>(null);
 
   const navigate = useNavigate();
 
@@ -25,24 +26,28 @@ const Play = ({ type }: PlayProps) => {
   
   const [gameObject, setGameObject] = useState<MangoBoard | null>(null);
 
-  const fetchGame = async (): Promise<void> => {
-    const game = await generateNewGameBoard(type);
+  const fetchGame = async (ref: string) => {
+    const game = await getGameBoard(type, ref);
     if (!game) {
       console.warn("Game not found");
-      
       return;
     }
 
     setGameObject(game.board);
+
+    if (ref === "new") {
+      navigate(`/${type}/${game.ref}`, { replace: true });
+    }
+
     setPlaying(false);
     setCompleted(false);
 
     // Reset and start the timer
     if (timerRef.current) {
-      clearInterval(timerRef.current as NodeJS.Timeout);
+      clearInterval(timerRef.current);
     }
     setTimer(0);
-  };
+  }
 
   const startPuzzle = () => {
     setPlaying(true);
@@ -79,10 +84,13 @@ const Play = ({ type }: PlayProps) => {
   }, []);
 
   useEffect(() => {
-    if (hasFetched.current) return;
+    // Only refresh if ref is not null, and it's the first render or the ref has changed to "new"
+    const noRefresh = (!ref || (hasFetched.current && !(prevRef.current != "new" && ref == "new")));
+    prevRef.current = ref || null;
+    if (noRefresh) return;
 
     hasFetched.current = true;
-    fetchGame();
+    fetchGame(ref);
   }, [ref, navigate, hasFetched, type]);
 
   useEffect(() => {

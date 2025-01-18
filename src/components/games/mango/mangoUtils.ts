@@ -197,7 +197,7 @@ export const generateMangoBoard = () => {
     attempts++;
   }
 
-  return false;
+  return null;
 };
 
 
