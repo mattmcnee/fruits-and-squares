@@ -86,7 +86,7 @@ const Play = ({ type }: PlayProps) => {
     } else{
       console.warn(user, ref);
     }
-  }, [user, ref]);
+  }, [user, ref, gameState]);
 
   // Set the grid size based on the window size
   useEffect(() => {
@@ -128,7 +128,7 @@ const Play = ({ type }: PlayProps) => {
   return (
     <div className='game-page'>
       <Navbar />
-      {/* <button onClick={() => puzzleComplete()} className="back-button">Hello</button> */}
+      <button onClick={() => puzzleComplete()} className="back-button">Hello</button>
       {type === "mango" && <MangoGame board={gameObject} gameState={gameState} puzzleComplete={puzzleComplete} startPuzzle={startPuzzle}/>}
     </div>
   );

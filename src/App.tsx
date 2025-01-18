@@ -5,11 +5,13 @@ import Play from "@pages/Play";
 import "./App.scss";
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Test from "@pages/Test";
 
 function App() {
   return (
     <Router future={{ v7_relativeSplatPath: true, v7_startTransition: true }}>
       <Routes>
+        <Route path="/test" element={<Test />} />
         <Route path="/signin" element={<Signin />} />
         <Route path="/signin/success" element={<SigninSuccess />} />
         <Route path="/mango/:ref" element={<Play type={"mango"} />} />
