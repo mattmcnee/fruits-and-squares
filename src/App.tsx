@@ -2,7 +2,7 @@ import Home from "@pages/Home";
 import Signin from "@pages/Signin";
 import SigninSuccess from "@pages/SigninSuccess";
 import Play from "@pages/Play";
-import "./App.css";
+import "./App.scss";
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 

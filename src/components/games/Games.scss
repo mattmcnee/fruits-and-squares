@@ -1,4 +1,4 @@
-$grid-size: 240px;
+$grid-size: var(--grid-size, 240px);
 
 .game-container {
   text-align: center; 

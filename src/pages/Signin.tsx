@@ -3,7 +3,6 @@ import { useAuth } from "@firebase/useAuth";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@components/ui/Navbar";
 import AuthButton from "@components/ui/AuthButton";
-import "./Page.scss";
 
 const LinkedInLogin = () => {
   const { user, authenticateWithLinkedIn } = useAuth();
