@@ -32,7 +32,7 @@ const Play = ({ type }: PlayProps) => {
   const [gameObject, setGameObject] = useState<MangoBoard | null>(null);
 
   const { user, loading } = useAuth();
-  const { addPlayerScoreToGame } = useFirestore();
+  const { addPlayerScoreToGame, updateUserLastGame } = useFirestore();
 
   const fetchGame = async (ref: string, user: User | null) => {
     const game = await getGameBoard(type, ref, user);
@@ -84,6 +84,7 @@ const Play = ({ type }: PlayProps) => {
 
     if (user && ref) {
       addPlayerScoreToGame(type, ref, gameState.timer, user.uid);
+      updateUserLastGame(type, user.uid, ref);
     } else{
       console.warn(user, ref);
     }

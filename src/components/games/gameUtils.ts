@@ -4,7 +4,7 @@ import { useFirestore } from "@firebase/useFirestore";
 import { User } from "firebase/auth";
 
 
-export const generateNewGameBoard = async (type: string) => {
+export const generateNewGameBoard = async (type: string, save = true) => {
   const { saveGameObject } = useFirestore();
   let board: MangoBoard | null = null;
 
@@ -19,6 +19,10 @@ export const generateNewGameBoard = async (type: string) => {
     return null;
   }
 
+  if (!save) {
+    return { ref: "unsaved", board };
+  }
+
   const { ref } = await saveGameObject(type, board);
 
   return { ref, board };
@@ -28,7 +32,7 @@ export const getGameBoard = async (type: string, ref: string, user: User | null)
   const { getGameObject, getNextGameForUser } = useFirestore();
   if (ref === "new") {
     if (!user) {
-      const game = await generateNewGameBoard(type);
+      const game = await generateNewGameBoard(type, false);
       console.log("Generated new game:", game);
       return game;
     } else {

@@ -2,7 +2,7 @@ import useFirestore from "@firebase/useFirestore";
 import { useState, useEffect } from "react";
 
 const Test = () => {
-  const { getNextOldestGame, getNextGameForUser } = useFirestore();
+  const { getNextGameForUser } = useFirestore();
   
   const [gameData, setGameData] = useState<any | null>(null);
 

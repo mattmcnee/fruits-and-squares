@@ -62,11 +62,24 @@ export const useFirestore = () => {
     }
 
     // Update the user's last game reference
-    if (nextGame) {
-      await setDoc(userDocRef, { ...userData, previous: { ...userData.previous, [type]: nextGame.ref } });
-    }
+    // if (nextGame) {
+    //   await setDoc(userDocRef, { ...userData, previous: { ...userData.previous, [type]: nextGame.ref } });
+    // }
 
     return nextGame;
+  }
+
+  const updateUserLastGame = async (type: string, uid: string, ref: string) => {
+    const userDocRef = doc(db, 'users', uid);
+    const userDocSnap = await getDoc(userDocRef);
+
+    if (!userDocSnap.exists()) {
+      console.warn("User document does not exist");
+      return;
+    }
+
+    const userData = userDocSnap.data();
+    await setDoc(userDocRef, { ...userData, previous: { ...userData.previous, [type]: ref } });
   }
 
   const addPlayerScoreToGame = async (type: string, boardHash: string, time: number, uid: string) => {
@@ -158,7 +171,7 @@ export const useFirestore = () => {
     }
   };
 
-  return { saveGameObject, getGameObject, addPlayerScoreToGame, getNextOldestGame, getNextGameForUser };
+  return { saveGameObject, getGameObject, addPlayerScoreToGame, getNextOldestGame, getNextGameForUser, updateUserLastGame };
 };
 
 export default useFirestore;
