@@ -1,6 +1,7 @@
 import { generateMangoBoard } from "@components/games/mango/mangoUtils";
 import { MangoBoard } from "@utils/types";
 import { useFirestore } from "@firebase/useFirestore";
+import { User } from "firebase/auth";
 
 
 export const generateNewGameBoard = async (type: string) => {
@@ -15,7 +16,7 @@ export const generateNewGameBoard = async (type: string) => {
 
   if (!board) {
     console.error("Failed to generate new game board");
-    return;
+    return null;
   }
 
   const { ref } = await saveGameObject(type, board);
@@ -23,12 +24,22 @@ export const generateNewGameBoard = async (type: string) => {
   return { ref, board };
 };
 
-export const getGameBoard = async (type: string, ref: string) => {
-  const { getGameObject } = useFirestore();
+export const getGameBoard = async (type: string, ref: string, user: User | null) => {
+  const { getGameObject, getNextGameForUser } = useFirestore();
   if (ref === "new") {
-    const game = await generateNewGameBoard(type);
-    console.log("Generated new game:", game);
-    return game;
+    if (!user) {
+      const game = await generateNewGameBoard(type);
+      console.log("Generated new game:", game);
+      return game;
+    } else {
+      // This will create a game using generateNewGameBoard if:
+      // the user's previous game reference is the most recent game created
+      const game = await getNextGameForUser(type, user.uid);
+      console.log("Retrieved game:", game);
+      return game;
+
+    }
+
   } else {
     const game = await getGameObject(type, ref);
     console.log("Retrieved game:", game);

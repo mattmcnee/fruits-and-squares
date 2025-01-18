@@ -2,6 +2,7 @@ import app from "./config";
 import { doc, setDoc, getFirestore, getDoc, serverTimestamp, collection, query, orderBy, limit, getDocs, startAfter, runTransaction } from "firebase/firestore";
 import SHA1 from "crypto-js/sha1";
 import { MangoBoard } from "@utils/types";
+import { generateNewGameBoard } from "@components/games/gameUtils";
 
 export const useFirestore = () => {
   const db = getFirestore(app);
@@ -14,7 +15,7 @@ export const useFirestore = () => {
     const docRef = doc(db, type, boardHash);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
-      return { isNew: false, ref: boardHash };
+      return { isNew: false, ref: boardHash, index: docSnap.data().index };
     }
 
     const index = await incrementDocumentCount(type);
@@ -22,8 +23,7 @@ export const useFirestore = () => {
     const newDoc = { board: boardString, players: [], createdAt: serverTimestamp(), index };
     await setDoc(docRef, newDoc);
 
-
-    return { isNew: true, ref: boardHash};
+    return { isNew: true, ref: boardHash, index};
   };
 
   const getGameObject = async (type: string, boardHash: string) => {
@@ -112,12 +112,18 @@ export const useFirestore = () => {
     const querySnapshot = await getDocs(q);
 
     if (querySnapshot.empty) {
-      console.warn("No more games found");
-      return null;
+      const newGame = await generateNewGameBoard(type);
+      if (!newGame) {
+        console.error("Failed to generate new game board");
+        return null;
+      }
+      const { index } = await saveGameObject(type, newGame.board);
+      return {...newGame, index};
     }
 
     const nextOldestGame = querySnapshot.docs[0];
-    return { ...nextOldestGame.data(), ref: nextOldestGame.id };
+    const data = nextOldestGame.data();
+    return { ...data, board: JSON.parse(data.board), ref: nextOldestGame.id };
   }
 
 

@@ -7,6 +7,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { GameState, MangoBoard } from "@utils/types";
 import useAuth from "@firebase/useAuth";
 import useFirestore from "@firebase/useFirestore";
+import { User } from "firebase/auth";
 
 interface PlayProps {
   type: string;
@@ -30,11 +31,11 @@ const Play = ({ type }: PlayProps) => {
   
   const [gameObject, setGameObject] = useState<MangoBoard | null>(null);
 
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const { addPlayerScoreToGame } = useFirestore();
 
-  const fetchGame = async (ref: string) => {
-    const game = await getGameBoard(type, ref);
+  const fetchGame = async (ref: string, user: User | null) => {
+    const game = await getGameBoard(type, ref, user);
     if (!game) {
       console.warn("Game not found");
       return;
@@ -105,13 +106,14 @@ const Play = ({ type }: PlayProps) => {
 
   useEffect(() => {
     // Only refresh if ref is not null, and it's the first render or the ref has changed to "new"
-    const noRefresh = (!ref || (hasFetched.current && !(prevRef.current != "new" && ref == "new")));
-    prevRef.current = ref || null;
+    if (!ref || loading) return;
+    const noRefresh = (hasFetched.current && !(prevRef.current != "new" && ref == "new"));
+    prevRef.current = ref;
     if (noRefresh) return;
 
     hasFetched.current = true;
-    fetchGame(ref);
-  }, [ref, navigate, hasFetched, type]);
+    fetchGame(ref, user);
+  }, [ref, navigate, hasFetched, type, loading, user]);
 
   useEffect(() => {
     return () => {
