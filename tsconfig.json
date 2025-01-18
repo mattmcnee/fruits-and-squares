@@ -23,6 +23,7 @@
       "@assets/*": ["assets/*"],
       "@pages/*": ["pages/*"],
       "@firebase/*": ["firebase/*"],
+      "@utils/*": ["utils/*"],
     }
   },
   "include": ["src"],

@@ -1,6 +1,7 @@
 import Home from "@pages/Home";
 import Signin from "@pages/Signin";
 import SigninSuccess from "@pages/SigninSuccess";
+import Play from "@pages/Play";
 import "./App.css";
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -11,6 +12,7 @@ function App() {
       <Routes>
         <Route path="/signin" element={<Signin />} />
         <Route path="/signin/success" element={<SigninSuccess />} />
+        <Route path="/mango/:ref" element={<Play type={"mango"} />} />
         <Route path="*" element={<Home/>} />
       </Routes>
     </Router>
