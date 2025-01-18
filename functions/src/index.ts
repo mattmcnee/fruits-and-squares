@@ -1,17 +1,18 @@
 const axios = require("axios");
-const functions = require("firebase-functions");
 const jwt = require("jsonwebtoken");
 const jwkToPem = require("jwk-to-pem");
-const admin = require("firebase-admin");
 const cors = require("cors");
 const serviceAccount = require("./sa.key.json");
 const { getAuth } = require("firebase-admin/auth");
-import type { UserRecord } from "firebase-admin/auth";
+import { UserRecord } from "firebase-admin/auth";
+import * as functions from "firebase-functions/v1";
+import * as admin from "firebase-admin";
 
 // Initialize Firebase Admin
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
+const db = admin.firestore();
 
 const corsHandler = cors({ origin: true });
 
@@ -150,3 +151,33 @@ const signupOrLogin = async (user: User): Promise<{ token: string; user: UserRec
     throw error;
   }
 };
+
+interface UserDocument {
+  public: {
+    displayName: string;
+    photoURL: string | null;
+  };
+  email: string | null;
+  createdAt: string;
+
+}
+exports.createUserDocument = functions.auth.user().onCreate(async (user) => {
+  try {
+    // Define the default structure for the user document
+    const userDoc: UserDocument = {
+      public: {
+        displayName: user.displayName || "Anonymous",
+        photoURL: user.photoURL || null,
+      },
+      email: user.email || null,
+      createdAt: new Date().toISOString(),
+    };
+
+    // Create the document in Firestore under the "users" collection
+    await db.collection("users").doc(user.uid).set(userDoc);
+
+    console.log(`User document created for UID: ${user.uid}`);
+  } catch (error) {
+    console.error(`Error creating user document for UID: ${user.uid}`, error);
+  }
+});

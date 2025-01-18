@@ -18,7 +18,7 @@
     "@google-cloud/storage": "^7.15.0",
     "axios": "^1.7.9",
     "cors": "^2.8.5",
-    "firebase-admin": "^12.7.0",
+    "firebase-admin": "^13.0.2",
     "firebase-functions": "^6.2.0",
     "jsonwebtoken": "^9.0.2",
     "jwk-to-pem": "^2.0.7"
