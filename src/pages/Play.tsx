@@ -2,9 +2,9 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import MangoGame from "@components/games/mango/MangoGame";
 import Navbar from "@components/ui/Navbar";
 import "@components/games/Games.scss";
-import { getGameBoard } from "@components/games/gameUtils";
+import { getGameBoard, createEmptyGameBoard } from "@components/games/gameUtils";
 import { useNavigate, useParams } from "react-router-dom";
-import { GameState, MangoBoard } from "@utils/types";
+import { GameState, MangoDoc } from "@utils/types";
 import useAuth from "@firebase/useAuth";
 import useFirestore from "@firebase/useFirestore";
 import { User } from "firebase/auth";
@@ -29,7 +29,12 @@ const Play = ({ type }: PlayProps) => {
 
   const gameList = ["beans", "mango"];
   
-  const [gameObject, setGameObject] = useState<MangoBoard | null>(null);
+  const [gameObject, setGameObject] = useState<MangoDoc>({
+    board: createEmptyGameBoard(type),
+    players: [],
+    createdAt: new Date(),
+    index: 0,
+  });
 
   const { user, loading } = useAuth();
   const { addPlayerScoreToGame, updateUserLastGame } = useFirestore();
@@ -41,7 +46,9 @@ const Play = ({ type }: PlayProps) => {
       return;
     }
 
-    setGameObject(game.board);
+    console.log("Game fetched:", game); 
+
+    setGameObject(game);
 
     if (ref === "new") {
       navigate(`/${type}/${game.ref}`, { replace: true });
@@ -131,8 +138,14 @@ const Play = ({ type }: PlayProps) => {
   return (
     <div className='game-page'>
       <Navbar />
-      <button onClick={() => puzzleComplete()} className="back-button">Hello</button>
-      {type === "mango" && <MangoGame board={gameObject} gameState={gameState} puzzleComplete={puzzleComplete} startPuzzle={startPuzzle}/>}
+      {/* <button onClick={() => puzzleComplete()} className="back-button">Hello</button> */}
+      {type === "mango" && <MangoGame 
+        board={gameObject.board} 
+        index={gameObject.index}
+        gameState={gameState} 
+        puzzleComplete={puzzleComplete} 
+        startPuzzle={startPuzzle}
+      />}
     </div>
   );
 };

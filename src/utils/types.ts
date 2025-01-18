@@ -6,6 +6,15 @@ export type MangoBoard = {
   isFixed: boolean;
 }[][];
 
+export type MangoDoc = {
+  board: MangoBoard;
+  players: string[];
+  createdAt: Date;
+  index: number;
+  ref?: string;
+  isNew?: boolean;
+}
+
 export type MangoKey = "hasBanana" | "hasMango";
 
 export type GameState = {
@@ -13,3 +22,4 @@ export type GameState = {
   playing: boolean;
   completed: boolean;
 }
+

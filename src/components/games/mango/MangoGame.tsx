@@ -12,12 +12,13 @@ import { formatTimer } from "@components/games/gameUtils";
 
 interface MangoGameProps {
   board: MangoBoard | null;
+  index: number;
   gameState: GameState;
   puzzleComplete: () => void;
   startPuzzle: () => void;
 }
 
-const MangoGame = ({ board, gameState, puzzleComplete, startPuzzle }: MangoGameProps) => {
+const MangoGame = ({ board, index, gameState, puzzleComplete, startPuzzle }: MangoGameProps) => {
   const [playableBoard, setPlayableBoard] = useState<MangoBoard>(createEmptyBoard());
 
   useEffect(() => {
@@ -60,7 +61,7 @@ const MangoGame = ({ board, gameState, puzzleComplete, startPuzzle }: MangoGameP
 
   return (
     <div className="game-container">
-      <h1 className="game-title">Mango</h1>
+      <h1 className="game-title">Mango {index ? `#${index}` : ""}</h1>
       <div className="game-timer">{formatTimer(gameState.timer)}</div>
       <div className="game-board mango">
         <div className={`game-board-overlay ${gameState.playing ? "hidden" : ""}`}>
