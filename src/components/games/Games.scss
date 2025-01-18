@@ -154,3 +154,10 @@ $grid-size: var(--grid-size, 240px);
     border-radius: 5px;
   }
 }
+
+@media (max-width: 768px) and (min-height: 650px){
+  .game-container{
+    padding-top: 26px;
+  }
+  
+}
