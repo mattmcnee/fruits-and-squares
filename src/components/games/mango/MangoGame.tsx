@@ -4,7 +4,7 @@ import mangoIcon from "/src/assets/mango.svg";
 import crossIcon from "/src/assets/tiny-cross.svg";
 import equalsIcon from "/src/assets/tiny-equals.svg";
 
-import { createEmptyBoard } from "./mangoUtils";
+import { createEmptyBoard, validateBoard } from "./mangoUtils";
 
 import { Link } from "react-router-dom";
 import { MangoBoard } from "@utils/types";
@@ -49,7 +49,7 @@ const MangoGame = ({ board, playing, completed, timer, puzzleComplete, startPuzz
       clickedCell.hasBanana = false;
     }
 
-    const isValid = { valid: true, message: "", completed: false };
+    const isValid = validateBoard(newBoard);
     setAlertState({ valid: isValid.valid, message: isValid.message });
 
     if (isValid.completed) {

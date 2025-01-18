@@ -200,3 +200,89 @@ export const generateMangoBoard = () => {
   return false;
 };
 
+
+// Validate a give board state
+
+const validateBanana = (board: MangoBoard, row: number, col: number) => {
+  const bananaCountRow = countFruit(board, row, true, "hasBanana");
+  const bananaCountCol = countFruit(board, col, false, "hasBanana");
+
+  return bananaCountRow <= 3 && 
+    bananaCountCol <= 3 && 
+    !checkConsecutive(board, row, col, "hasBanana");
+};
+
+const validateMango = (board: MangoBoard, row: number, col:number ) => {
+  const mangoCountRow = countFruit(board, row, true, "hasMango");
+  const mangoCountCol = countFruit(board, col, false, "hasMango");
+
+  return mangoCountRow <= 3 && 
+    mangoCountCol <= 3 && 
+    !checkConsecutive(board, row, col, "hasMango");
+};
+
+export const validateBoard = (board: MangoBoard) => {
+  // for each cell, check if it has a fruit and if it has a fruit, check if it is valid
+  let valid = true;
+  let filled = true;
+  let completed = false;
+  let message = "";
+
+  for (let row = 0; row < size; row++) {
+    for (let col = 0; col < size; col++) {
+      if (board[row][col].hasBanana && !validateBanana(board, row, col)) {
+        valid = false;
+        message = `Invalid banana at (${col + 1}, ${row + 1})`;
+        break;
+      }
+      if (board[row][col].hasMango && !validateMango(board, row, col)) {
+        valid = false;
+        message = `Invalid mango at (${col + 1}, ${row + 1})`;
+        break;
+      }
+      if (board[row][col].hasRight.exists) {
+        const notFilled = !board[row][col].hasBanana && !board[row][col].hasMango 
+          || !board[row][col + 1].hasBanana && !board[row][col + 1].hasMango;
+
+        if (!notFilled) {
+          const isEquals = board[row][col].hasBanana == board[row][col + 1].hasBanana 
+            && board[row][col].hasMango == board[row][col + 1].hasMango;
+
+          if (isEquals != board[row][col].hasRight.isEquals) {
+            valid = false;
+            message = `Invalid evaluation to the right of (${col + 1}, ${row + 1})`;
+            break;
+          }
+        }
+      }
+      if (board[row][col].hasBottom.exists) {
+        const notFilled = !board[row][col].hasBanana && !board[row][col].hasMango
+          || !board[row + 1][col].hasBanana && !board[row + 1][col].hasMango;
+        
+        if (!notFilled) {
+          const isEquals = board[row][col].hasBanana == board[row + 1][col].hasBanana
+            && board[row][col].hasMango == board[row + 1][col].hasMango;
+
+          if (isEquals != board[row][col].hasBottom.isEquals) {
+            valid = false;
+            message = `Invalid evaluation at the bottom of (${col + 1}, ${row + 1})`;
+            break;
+          }
+        }
+      }
+
+      if (!board[row][col].hasBanana && !board[row][col].hasMango) {
+        filled = false;
+      }
+
+    }
+  }
+
+  if (filled && valid) {
+    message = "Congratulations! You have solved the puzzle!";
+    completed = true;
+  }
+
+  return {valid, message, completed};
+};
+
