@@ -35,7 +35,7 @@ const MangoGame = ({ board, playing, completed, timer, puzzleComplete, startPuzz
 
   const handleCellClick = (rowIndex: number, colIndex: number) => {
 
-    const newBoard = [...playableBoard.board];
+    const newBoard = [...playableBoard];
     const clickedCell = newBoard[rowIndex][colIndex];
 
     if (clickedCell.isFixed) return;
@@ -57,7 +57,7 @@ const MangoGame = ({ board, playing, completed, timer, puzzleComplete, startPuzz
       puzzleComplete();
     }
 
-    setPlayableBoard({ board: newBoard });
+    setPlayableBoard(newBoard);
   };
 
   return (
@@ -78,7 +78,7 @@ const MangoGame = ({ board, playing, completed, timer, puzzleComplete, startPuzz
             </>
         )}
         </div>
-        {playableBoard && playableBoard.board.map((row: typeof playableBoard.board[0], rowIndex) =>
+        {playableBoard && playableBoard.map((row: typeof playableBoard[0], rowIndex) =>
           row.map((cell, colIndex) => (
             <div
               key={`${rowIndex}-${colIndex}`}

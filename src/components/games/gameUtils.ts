@@ -1,12 +1,17 @@
-import { createEmptyBoard } from '@components/games/mango/mangoUtils';
+import { generateMangoBoard } from '@components/games/mango/mangoUtils';
 import { MangoBoard } from '@utils/types';
 
 
 export const generateNewGameBoard = async (type: string) => {
-  let board: MangoBoard | null = { board: [] };
+  let board: MangoBoard | null = null;
 
   if (type === "mango") {
-    board = createEmptyBoard();
+    const generatedBoard = generateMangoBoard();
+    if (generatedBoard !== false) {
+      board = generatedBoard;
+    } else {
+      return { board: null };
+    }
   } else {
     return { board: null };
   }
