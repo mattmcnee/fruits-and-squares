@@ -107,18 +107,93 @@ const tryGenerateBoard = () => {
   return board;
 };
 
+const addRightAndBottom = (board: MangoBoard) => {
+  const randomCount = Math.floor(Math.random() * 4) + 2;
+  const randomCells = generateAllCells()
+    .filter(([row, col]) => !(row === size - 1 && col === size - 1))
+    .sort(() => 0.5 - Math.random())
+    .slice(0, randomCount);
+
+  randomCells.forEach(([row, col]) => {
+    let isRight = Math.random() < 0.5;
+    if (row === size - 1) isRight = true;
+    if (col === size - 1) isRight = false;
+    
+    if (isRight) {
+      board[row][col].hasRight.exists = true;
+      // Check if either fruit matches
+      board[row][col].hasRight.isEquals = 
+        (board[row][col].hasBanana && board[row][col + 1].hasBanana) ||
+        (board[row][col].hasMango && board[row][col + 1].hasMango);
+    } else {
+      board[row][col].hasBottom.exists = true;
+      // Check if either fruit matches
+      board[row][col].hasBottom.isEquals = 
+        (board[row][col].hasBanana && board[row + 1][col].hasBanana) ||
+        (board[row][col].hasMango && board[row + 1][col].hasMango);
+    }
+  });
+
+  return board;
+};
+
+const addFixedCells = (board: MangoBoard) => {
+  const fixedCount = 12;
+  const maxInline = 2;
+  const randomCells = generateAllCells().sort(() => 0.5 - Math.random());
+
+  let fixedCells = 0;
+  const rowFixedCounts = Array(size).fill(0);
+  const colFixedCounts = Array(size).fill(0);
+
+  for (let i = 0; i < randomCells.length && fixedCells < fixedCount; i++) {
+    const [row, col] = randomCells[i];
+    const cellAbove = row > 0 ? board[row - 1][col] : null;
+    const cellLeft = col > 0 ? board[row][col - 1] : null;
+
+    if (
+      rowFixedCounts[row] < maxInline &&
+      colFixedCounts[col] < maxInline &&
+      (!cellAbove || !cellAbove.hasBottom.exists) &&
+      (!cellLeft || !cellLeft.hasRight.exists) &&
+      !board[row][col].hasBottom.exists &&
+      !board[row][col].hasRight.exists
+    ) {
+      board[row][col].isFixed = true;
+      fixedCells++;
+      rowFixedCounts[row]++;
+      colFixedCounts[col]++;
+    }
+  }
+
+  return board;
+};
+
+const clearNonFixedCells = (board: MangoBoard) => {
+  board = board.map(row =>
+    row.map(cell => ({
+      ...cell,
+      hasMango: cell.isFixed ? cell.hasMango : false,
+      hasBanana: cell.isFixed ? cell.hasBanana : false,
+    }))
+  )
+
+  return board;
+}
+
 export const generateMangoBoard = () => {
   let attempts = 0;
 
   while (attempts < maxAttempts) {
     let board = tryGenerateBoard();
     if (board) {
+      board = addRightAndBottom(board);
+      board = addFixedCells(board);
+      board = clearNonFixedCells(board);
       return board;
     } 
     attempts++;
   }
-
-
 
   return false;
 };
