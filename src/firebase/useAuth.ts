@@ -22,9 +22,7 @@ export function useAuth() {
     ? import.meta.env.VITE_DEV_LINKEDIN_REDIRECT_URI 
     : import.meta.env.VITE_LINKEDIN_REDIRECT_URI;
 
-  const FUNCTION_URL = DEV_MODE
-    ? import.meta.env.VITE_DEV_FUNCTIONS_BASE_URL
-    : import.meta.env.VITE_FUNCTIONS_BASE_URL;
+  const FUNCTION_URL = import.meta.env.VITE_FUNCTIONS_BASE_URL;
 
 
   // Listen for auth state changes and set state accordingly

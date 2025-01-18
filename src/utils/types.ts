@@ -7,3 +7,9 @@ export type MangoBoard = {
 }[][];
 
 export type MangoKey = "hasBanana" | "hasMango";
+
+export type GameState = {
+  timer: number;
+  playing: boolean;
+  completed: boolean;
+}

@@ -1,10 +1,12 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import MangoGame from "@components/games/mango/MangoGame";
 import Navbar from "@components/ui/Navbar";
 import "@components/games/Games.scss";
-import { getGameBoard, formatTimer } from "@components/games/gameUtils";
+import { getGameBoard } from "@components/games/gameUtils";
 import { useNavigate, useParams } from "react-router-dom";
-import { MangoBoard } from "@utils/types";
+import { GameState, MangoBoard } from "@utils/types";
+import useAuth from "@firebase/useAuth";
+import useFirestore from "@firebase/useFirestore";
 
 interface PlayProps {
   type: string;
@@ -17,14 +19,19 @@ const Play = ({ type }: PlayProps) => {
 
   const navigate = useNavigate();
 
-  const [playing, setPlaying] = useState(false);
-  const [completed, setCompleted] = useState(false);
-  const [timer, setTimer] = useState(0);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const [gameState, setGameState] = useState<GameState>({
+    timer: 0,
+    playing: false,
+    completed: false,
+  });
 
   const gameList = ["beans", "mango"];
   
   const [gameObject, setGameObject] = useState<MangoBoard | null>(null);
+
+  const { user } = useAuth();
+  const { addPlayerScoreToGame } = useFirestore();
 
   const fetchGame = async (ref: string) => {
     const game = await getGameBoard(type, ref);
@@ -39,34 +46,47 @@ const Play = ({ type }: PlayProps) => {
       navigate(`/${type}/${game.ref}`, { replace: true });
     }
 
-    setPlaying(false);
-    setCompleted(false);
-
     // Reset and start the timer
     if (timerRef.current) {
       clearInterval(timerRef.current);
     }
-    setTimer(0);
+
+    setGameState({
+      timer: 0,
+      playing: false,
+      completed: false,
+    });
   }
 
   const startPuzzle = () => {
-    setPlaying(true);
-
     if (timerRef.current) {
       clearInterval(timerRef.current as NodeJS.Timeout);
     }
-    setTimer(0);
+    setGameState({
+      timer: 0,
+      playing: true,
+      completed: false,
+    });
+
     timerRef.current = setInterval(() => {
-      setTimer(prev => prev + 1);
+      setGameState(prev => ({ ...prev, timer: prev.timer + 1 }));
     }, 1000);
   };
 
-  const puzzleComplete = () => {
-
+  const puzzleComplete = useCallback(() => {
     clearInterval(timerRef.current as NodeJS.Timeout);
-    setCompleted(true);
-    setPlaying(false);
-  };
+    setGameState(prev => ({
+      ...prev,
+      playing: false,
+      completed: true,
+    }));
+
+    if (user && ref) {
+      addPlayerScoreToGame(type, ref, gameState.timer, user.uid);
+    } else{
+      console.warn(user, ref);
+    }
+  }, [user, ref]);
 
   // Set the grid size based on the window size
   useEffect(() => {
@@ -108,7 +128,8 @@ const Play = ({ type }: PlayProps) => {
   return (
     <div className='game-page'>
       <Navbar />
-      {type === "mango" && <MangoGame board={gameObject} playing={playing} completed={completed} timer={formatTimer(timer)} puzzleComplete={puzzleComplete} startPuzzle={startPuzzle}/>}
+      {/* <button onClick={() => puzzleComplete()} className="back-button">Hello</button> */}
+      {type === "mango" && <MangoGame board={gameObject} gameState={gameState} puzzleComplete={puzzleComplete} startPuzzle={startPuzzle}/>}
     </div>
   );
 };

@@ -7,18 +7,17 @@ import equalsIcon from "/src/assets/tiny-equals.svg";
 import { createEmptyBoard, validateBoard } from "./mangoUtils";
 
 import { Link } from "react-router-dom";
-import { MangoBoard } from "@utils/types";
+import { MangoBoard, GameState } from "@utils/types";
+import { formatTimer } from "@components/games/gameUtils";
 
 interface MangoGameProps {
   board: MangoBoard | null;
-  playing: boolean;
-  completed: boolean;
-  timer: string;
+  gameState: GameState;
   puzzleComplete: () => void;
   startPuzzle: () => void;
 }
 
-const MangoGame = ({ board, playing, completed, timer, puzzleComplete, startPuzzle }: MangoGameProps) => {
+const MangoGame = ({ board, gameState, puzzleComplete, startPuzzle }: MangoGameProps) => {
   const [playableBoard, setPlayableBoard] = useState<MangoBoard>(createEmptyBoard());
 
   useEffect(() => {
@@ -62,12 +61,12 @@ const MangoGame = ({ board, playing, completed, timer, puzzleComplete, startPuzz
   return (
     <div className="game-container">
       <h1 className="game-title">Mango</h1>
-      <div className="game-timer">{timer}</div>
+      <div className="game-timer">{formatTimer(gameState.timer)}</div>
       <div className="game-board mango">
-        <div className={`game-board-overlay ${playing ? "hidden" : ""}`}>
-          {completed ? ( 
+        <div className={`game-board-overlay ${gameState.playing ? "hidden" : ""}`}>
+          {gameState.completed ? ( 
             <>
-              <div className="overlay-text">Completed in {timer}</div>
+              <div className="overlay-text">Completed in {formatTimer(gameState.timer)}</div>
               <Link to="/mango/new" className="overlay-button">Play another</Link>
             </>
           ) : (

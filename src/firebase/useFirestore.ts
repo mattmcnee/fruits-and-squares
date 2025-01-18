@@ -34,7 +34,33 @@ export const useFirestore = () => {
     return null;
   }
 
-  return { saveGameObject, getGameObject };
+  const addPlayerScoreToGame = async (type: string, boardHash: string, time: number, uid: string) => {
+    const docRef = doc(db, type, boardHash);
+    const docSnap = await getDoc(docRef);
+
+    const userData = {
+      uid,
+      time,
+    }
+
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      const players = data.players || [];
+      let totalPlayers = data.totalPlayers || 0;
+
+      // Check if the player already exists
+      const playerExists = players.some((player: { uid: string }) => player.uid === uid);
+      if (!playerExists) {
+        players.push(userData);
+        totalPlayers += 1;
+        await setDoc(docRef, { ...data, players, totalPlayers });
+      } else {
+        console.warn("User has already logged a time for this game");
+      }
+    }
+  };
+
+  return { saveGameObject, getGameObject, addPlayerScoreToGame };
 };
 
 export default useFirestore;
