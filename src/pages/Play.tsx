@@ -62,6 +62,21 @@ const Play = ({ type }: PlayProps) => {
     setPlaying(false);
   }
 
+  // Set the grid size based on the window size
+  useEffect(() => {
+    const handleResize = () => {
+      const scale = Math.min(Math.min(window.innerWidth, window.innerHeight - 190) - 60, 800);
+      document.documentElement.style.setProperty('--grid-size', `${scale}px`);
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
   useEffect(() => {
     if (hasFetched.current) return;
 
@@ -82,7 +97,7 @@ const Play = ({ type }: PlayProps) => {
   }
 
   return (
-    <div>
+    <div className='game-page'>
       <Navbar />
       {type === "mango" && <MangoGame board={gameObject} playing={playing} completed={completed} timer={formatTimer(timer)} puzzleComplete={puzzleComplete} startPuzzle={startPuzzle}/>}
     </div>
