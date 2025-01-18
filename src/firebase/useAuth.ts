@@ -16,7 +16,7 @@ export function useAuth() {
   const auth = getAuth(app);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const DEV_MODE = import.meta.env.MODE === 'development';
+  const DEV_MODE = import.meta.env.MODE === "development";
 
   const REDIRECT_URI = DEV_MODE 
     ? import.meta.env.VITE_DEV_LINKEDIN_REDIRECT_URI 

@@ -1,10 +1,10 @@
-import { useEffect, useState, useRef } from 'react';
-import MangoGame from '@components/games/mango/MangoGame';
-import Navbar from '@components/ui/Navbar'
-import '@components/games/Games.scss'
-import { generateNewGameBoard, formatTimer } from '@components/games/gameUtils';
-import { useNavigate, useParams } from 'react-router-dom';
-import { MangoBoard } from '@utils/types';
+import { useEffect, useState, useRef } from "react";
+import MangoGame from "@components/games/mango/MangoGame";
+import Navbar from "@components/ui/Navbar";
+import "@components/games/Games.scss";
+import { generateNewGameBoard, formatTimer } from "@components/games/gameUtils";
+import { useNavigate, useParams } from "react-router-dom";
+import { MangoBoard } from "@utils/types";
 
 interface PlayProps {
   type: string;
@@ -29,6 +29,7 @@ const Play = ({ type }: PlayProps) => {
     const game = await generateNewGameBoard(type);
     if (!game) {
       console.warn("Game not found");
+      
       return;
     }
 
@@ -53,27 +54,27 @@ const Play = ({ type }: PlayProps) => {
     timerRef.current = setInterval(() => {
       setTimer(prev => prev + 1);
     }, 1000);
-  }
+  };
 
   const puzzleComplete = () => {
 
     clearInterval(timerRef.current as NodeJS.Timeout);
     setCompleted(true);
     setPlaying(false);
-  }
+  };
 
   // Set the grid size based on the window size
   useEffect(() => {
     const handleResize = () => {
       const scale = Math.min(Math.min(window.innerWidth, window.innerHeight - 190) - 60, 800);
-      document.documentElement.style.setProperty('--grid-size', `${scale}px`);
+      document.documentElement.style.setProperty("--grid-size", `${scale}px`);
     };
 
     handleResize();
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
 

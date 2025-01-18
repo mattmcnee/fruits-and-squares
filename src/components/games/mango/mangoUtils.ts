@@ -81,6 +81,7 @@ const chooseFruit = (board: MangoBoard, row: number, col: number) => {
   if (canPlaceBanana && canPlaceMango) {
     const bananaTotal = bananaCountRow + bananaCountCol;
     const mangoTotal = mangoCountRow + mangoCountCol;
+    
     return bananaTotal < mangoTotal ? "hasBanana" : "hasMango";
   }
 
@@ -176,10 +177,10 @@ const clearNonFixedCells = (board: MangoBoard) => {
       hasMango: cell.isFixed ? cell.hasMango : false,
       hasBanana: cell.isFixed ? cell.hasBanana : false,
     }))
-  )
+  );
 
   return board;
-}
+};
 
 export const generateMangoBoard = () => {
   let attempts = 0;
@@ -190,6 +191,7 @@ export const generateMangoBoard = () => {
       board = addRightAndBottom(board);
       board = addFixedCells(board);
       board = clearNonFixedCells(board);
+      
       return board;
     } 
     attempts++;

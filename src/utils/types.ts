@@ -6,4 +6,4 @@ export type MangoBoard = {
   isFixed: boolean;
 }[][];
 
-export type MangoKey = 'hasBanana' | 'hasMango';
+export type MangoKey = "hasBanana" | "hasMango";

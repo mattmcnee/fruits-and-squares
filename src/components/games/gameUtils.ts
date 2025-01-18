@@ -1,5 +1,5 @@
-import { generateMangoBoard } from '@components/games/mango/mangoUtils';
-import { MangoBoard } from '@utils/types';
+import { generateMangoBoard } from "@components/games/mango/mangoUtils";
+import { MangoBoard } from "@utils/types";
 
 
 export const generateNewGameBoard = async (type: string) => {
@@ -18,7 +18,7 @@ export const generateNewGameBoard = async (type: string) => {
 
   return { board };
 
-}
+};
 
 export const formatTimer = (time: number) => {
   const hours = Math.floor(time / 3600);
@@ -30,4 +30,4 @@ export const formatTimer = (time: number) => {
   } else {
     return `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
   }
-}
+};
