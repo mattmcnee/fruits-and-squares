@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { createEmptyBeansBoard, validateBoard } from "./beansUtils";
-import { BeansBoard, GameState } from "@utils/types";
+import { BeansBoard, GameState, GameScore } from "@utils/types";
 import refreshIcon from "@assets/refresh.svg";
 import forwardsIcon from "@assets/skip-forward.svg";
 import { TertiaryIconButton, PrimaryButton } from "@components/ui/Buttons";
@@ -8,21 +8,27 @@ import { formatTimer } from "@components/games/gameUtils";
 import { useNavigate } from "react-router-dom";
 import BeansSquare from "./BeansSquare";
 
+import BarChart from "@components/graphs/BarChart";
+import useAuth from "@firebase/useAuth";
+
 interface BeansGameProps {
   board: BeansBoard | null;
   index: number;
+  players: GameScore[];
   gameState: GameState;
   puzzleComplete: () => void;
   startPuzzle: () => void;
   skipPuzzle: () => void;
+
 }
 
-const BeansGame = ({ board, index, gameState, puzzleComplete, startPuzzle, skipPuzzle }: BeansGameProps)  => {
+const BeansGame = ({ board, index, players, gameState, puzzleComplete, startPuzzle, skipPuzzle }: BeansGameProps)  => {
   const [playableBoard, setPlayableBoard] = useState<BeansBoard>(createEmptyBeansBoard());
   const [initialBoard, setInitialBoard] = useState<BeansBoard>(createEmptyBeansBoard());
   const [alertState, setAlertState] = useState({ valid: true, message: "" });
 
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const resetBoard = useCallback(() => {
     setPlayableBoard(JSON.parse(JSON.stringify(initialBoard)));
@@ -84,6 +90,9 @@ const BeansGame = ({ board, index, gameState, puzzleComplete, startPuzzle, skipP
           ) : (
             gameState.completed ? ( 
               <>
+                {user && (
+                  <BarChart scoresData={players} userId={user.uid}/>
+                )}
                 <div className="overlay-text">Completed in {formatTimer(gameState.timer)}</div>
                 <PrimaryButton onClick={() => navigate("/beans/new")} className="overlay-button">Play another</PrimaryButton>
               </>

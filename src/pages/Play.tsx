@@ -128,7 +128,8 @@ const Play = ({ type }: PlayProps) => {
   // Set the grid size based on the window size
   useEffect(() => {
     const handleResize = () => {
-      const scale = Math.min(Math.min(window.innerWidth, window.innerHeight - 190) - 60, 800);
+      const MAX_SIZE = 600;
+      const scale = Math.min(Math.min(window.innerWidth, window.innerHeight - 190) - 60, MAX_SIZE);
       document.documentElement.style.setProperty("--grid-size", `${scale}px`);
     };
 
@@ -169,6 +170,7 @@ const Play = ({ type }: PlayProps) => {
       {type === "mango" && isMangoBoard(gameObject.board) && <MangoGame 
         board={gameObject.board} 
         index={gameObject.index}
+        players={gameObject.players}
         gameState={gameState} 
         puzzleComplete={puzzleComplete} 
         startPuzzle={startPuzzle}
@@ -178,6 +180,7 @@ const Play = ({ type }: PlayProps) => {
       {type === "beans" && isBeansBoard(gameObject.board) && <BeansGame
         board={gameObject.board}
         index={gameObject.index}
+        players={gameObject.players}
         gameState={gameState}
         puzzleComplete={puzzleComplete}
         startPuzzle={startPuzzle}

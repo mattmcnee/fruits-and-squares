@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import BarChart from "@components/graphs/BarChart";
-import dummyData from '@components/graphs/dummy-scores.json'
+import dummyData from "@components/graphs/dummy-scores.json";
 
 const Test = () => {
 

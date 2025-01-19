@@ -6,24 +6,29 @@ import { createEmptyMangoBoard, validateBoard } from "./mangoUtils";
 import { TertiaryIconButton, PrimaryButton } from "@components/ui/Buttons";
 
 import { useNavigate } from "react-router-dom";
-import { MangoBoard, GameState } from "@utils/types";
+import { MangoBoard, GameState, GameScore } from "@utils/types";
 import { formatTimer } from "@components/games/gameUtils";
 import MangoSquare from "./MangoSquare";
+
+import BarChart from "@components/graphs/BarChart";
+import useAuth from "@firebase/useAuth";
 
 interface MangoGameProps {
   board: MangoBoard | null;
   index: number;
+  players: GameScore[];
   gameState: GameState;
   puzzleComplete: () => void;
   startPuzzle: () => void;
   skipPuzzle: () => void;
 }
 
-const MangoGame = ({ board, index, gameState, puzzleComplete, startPuzzle, skipPuzzle }: MangoGameProps) => {
+const MangoGame = ({ board, index, players, gameState, puzzleComplete, startPuzzle, skipPuzzle }: MangoGameProps) => {
   const [playableBoard, setPlayableBoard] = useState<MangoBoard>(createEmptyMangoBoard());
   const [initialBoard, setInitialBoard] = useState<MangoBoard>(createEmptyMangoBoard());
 
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
     if (board) {
@@ -90,6 +95,9 @@ const MangoGame = ({ board, index, gameState, puzzleComplete, startPuzzle, skipP
           ) : (
             gameState.completed ? ( 
               <>
+                {user && (
+                  <BarChart scoresData={players} userId={user.uid}/>
+                )}
                 <div className="overlay-text">Completed in {formatTimer(gameState.timer)}</div>
                 <PrimaryButton onClick={() => navigate("/mango/new")} className="overlay-button">Play another</PrimaryButton>
               </>
