@@ -152,8 +152,8 @@ export const tryGenerateBoard = () => {
     board[rowIndex][colIndex].color = colors[rowIndex].color;
   }
 
-  if (isValid) {
-    return board;
+  if (!isValid) {
+    return false;
   }
 
   return board;
@@ -167,7 +167,7 @@ export const generateBeansBoard = () => {
     if (board) {
       board = colorAdjacentSquares(board);
       board = fillBoardWithColor(board);
-      board = removeCrosses(board);
+      // board = removeCrosses(board);
       return board;
     }
     attempts++;

@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
 import { colors, createEmptyBeansBoard } from './beansUtils';
 import { BeansBoard, GameState } from '@utils/types';
-
+import refreshIcon from '@assets/refresh.svg';
+import forwardsIcon from '@assets/skip-forward.svg';
+import { TertiaryIconButton } from '@components/ui/Buttons';
+import { formatTimer } from "@components/games/gameUtils";
 import { useNavigate } from "react-router-dom";
 import BeansSquare from './BeansSquare';
 
@@ -59,7 +62,16 @@ const BeansGame = ({ board, index, gameState, puzzleComplete, startPuzzle }: Bea
 
   return (
     <div className="game-container">
-      <h1 className="game-title">Beans</h1>
+      <div className="game-header">
+        <TertiaryIconButton onClick={() => alert("Refresh")}>
+          <img src={refreshIcon} alt="refresh" />
+        </TertiaryIconButton>
+        <h1 className="game-title">Beans {index ? `#${index}` : ""}</h1>
+        <TertiaryIconButton onClick={() => navigate("/beans/new")}>
+          <img src={forwardsIcon} alt="refresh" />
+        </TertiaryIconButton>
+      </div>
+      <div className="game-timer">{formatTimer(gameState.timer)}</div>
       <div className="game-board bean">
         {playableBoard.map((row, rowIndex) =>
           row.map((cell, colIndex) => (
