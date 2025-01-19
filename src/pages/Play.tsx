@@ -44,12 +44,14 @@ const Play = ({ type }: PlayProps) => {
     // Don't want to pass in ref "unsaved" as it will try to load from firestore
     if (ref === "unsaved"){
       navigate(`/${type}/new`, { replace: true });
+      
       return;
     } 
 
     const game = await getGameBoard(type, ref, user);
     if (!game) {
       console.warn("Game not found");
+      
       return;
     }
 
@@ -81,7 +83,7 @@ const Play = ({ type }: PlayProps) => {
         loading: false,
       });
     }
-  }
+  };
 
   const startPuzzle = () => {
     if (timerRef.current) {
@@ -154,7 +156,7 @@ const Play = ({ type }: PlayProps) => {
   }
 
   return (
-    <div className='game-page'>
+    <div className="game-page">
       <Navbar />
       {/* <button onClick={() => puzzleComplete()} className="back-button">Hello</button> */}
       {type === "mango" && <MangoGame 

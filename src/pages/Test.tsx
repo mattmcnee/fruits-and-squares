@@ -16,6 +16,6 @@ const Test = () => {
       {gameData && <pre>{JSON.stringify(gameData, null, 2)}</pre>}
     </div>
   );
-}
+};
 
 export default Test;

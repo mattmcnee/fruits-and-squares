@@ -70,7 +70,7 @@ export const TertiaryIconButton = ({ onClick, children, type = "button", disable
 
 export const AuthLinkedInButton = ({ onClick, children, type = "button", disabled = false, className = "" }: ButtonProps) => (
   <BaseButton baseClassName="btn-auth-linkedin" className={className} onClick={onClick} type={type} disabled={disabled}>
-    <img className='btn-auth-icon' src={LinkedInIcon} alt="LinkedIn logo" />
+    <img className="btn-auth-icon" src={LinkedInIcon} alt="LinkedIn logo" />
     {children}
   </BaseButton>
 );

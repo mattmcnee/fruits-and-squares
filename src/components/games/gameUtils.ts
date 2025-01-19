@@ -16,6 +16,7 @@ export const generateNewGameBoard = async (type: string, save = true): Promise<M
 
   if (!board) {
     console.error("Failed to generate new game board");
+    
     return null;
   }
 
@@ -34,12 +35,14 @@ export const getGameBoard = async (type: string, ref: string, user: User | null)
     if (!user) {
       const game = await generateNewGameBoard(type, false);
       console.log("Generated game without saving:", game);
+      
       return game;
     } else {
       // This will create a game using generateNewGameBoard if:
       // the user's previous game reference is the most recent game created
       const game = await getNextGameForUser(type, user.uid);
       console.log("Retrieved game or generated and saved:", game);
+      
       return game;
 
     }
@@ -47,9 +50,10 @@ export const getGameBoard = async (type: string, ref: string, user: User | null)
   } else {
     const game = await getGameObject(type, ref);
     console.log("Retrieved game:", game);
+    
     return game;
   }
-}
+};
 
 export const formatTimer = (time: number) => {
   const hours = Math.floor(time / 3600);
@@ -65,7 +69,8 @@ export const formatTimer = (time: number) => {
 
 export const createEmptyGameBoard = (type: string) => {
   if (type !== "mango") console.warn ("Invalid game type");
+  
   return createEmptyBoard();
-}
+};
 
 

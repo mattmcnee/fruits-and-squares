@@ -8,7 +8,7 @@ const Home = () => {
   return (
     <div>
       <Navbar />
-      <div className='page-body'>
+      <div className="page-body">
         <h1>Welcome to Fruits & Squares</h1>
         <p>This is the homepage of our games website.</p>
 

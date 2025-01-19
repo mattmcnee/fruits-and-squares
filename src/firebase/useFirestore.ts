@@ -16,6 +16,7 @@ export const useFirestore = () => {
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
       const data = docSnap.data();
+      
       return { 
         isNew: false, 
         ref: boardHash, 
@@ -40,6 +41,7 @@ export const useFirestore = () => {
 
     if (docSnap.exists()) {
       const data = docSnap.data();
+      
       return { 
         board: JSON.parse(data.board), 
         ref: boardHash, 
@@ -50,15 +52,16 @@ export const useFirestore = () => {
     }
 
     return null;
-  }
+  };
 
   const getNextGameForUser = async (type: string, uid: string) => {
     // Get the user's document reference
-    const userDocRef = doc(db, 'users', uid);
+    const userDocRef = doc(db, "users", uid);
     const userDocSnap = await getDoc(userDocRef);
 
     if (!userDocSnap.exists()) {
       console.warn("User document does not exist");
+      
       return null;
     }
 
@@ -81,20 +84,21 @@ export const useFirestore = () => {
     // }
 
     return nextGame;
-  }
+  };
 
   const updateUserLastGame = async (type: string, uid: string, ref: string) => {
-    const userDocRef = doc(db, 'users', uid);
+    const userDocRef = doc(db, "users", uid);
     const userDocSnap = await getDoc(userDocRef);
 
     if (!userDocSnap.exists()) {
       console.warn("User document does not exist");
+      
       return;
     }
 
     const userData = userDocSnap.data();
     await setDoc(userDocRef, { ...userData, previous: { ...userData.previous, [type]: ref } });
-  }
+  };
 
   const addPlayerScoreToGame = async (type: string, boardHash: string, time: number, uid: string) => {
     const docRef = doc(db, type, boardHash);
@@ -104,7 +108,7 @@ export const useFirestore = () => {
       uid,
       time,
       playedAt: new Date(),
-    }
+    };
 
     if (docSnap.exists()) {
       const data = docSnap.data();
@@ -129,6 +133,7 @@ export const useFirestore = () => {
       const docSnap = await getDoc(docRef);
       if (!docSnap.exists()) {
         console.warn("Document does not exist");
+        
         return null;
       }
       q = query(gamesRef, orderBy("createdAt", "asc"), limit(1), startAfter(docSnap));
@@ -142,14 +147,17 @@ export const useFirestore = () => {
       const newGame = await generateNewGameBoard(type);
       if (!newGame) {
         console.error("Failed to generate new game board");
+        
         return null;
       }
       const doc = await saveGameObject(type, newGame.board);
+      
       return doc as MangoDoc;
     }
 
     const nextOldestGame = querySnapshot.docs[0];
     const data = nextOldestGame.data();
+    
     return { 
       board: JSON.parse(data.board), 
       ref: nextOldestGame.id, 
@@ -157,16 +165,16 @@ export const useFirestore = () => {
       createdAt: data.createdAt, 
       index: data.index 
     } as MangoDoc;
-  }
+  };
 
 
   const incrementDocumentCount = async (type: string): Promise<number> => {
-    if (type !== 'mango' && type !== 'beans') {
-      console.error('Invalid type. Type must be either "mango" or "beans".');
-      throw new Error('Invalid type');
+    if (type !== "mango" && type !== "beans") {
+      console.error("Invalid type. Type must be either \"mango\" or \"beans\".");
+      throw new Error("Invalid type");
     }
   
-    const countRef = doc(db, 'counts', type);
+    const countRef = doc(db, "counts", type);
     
     try {
       let newTotal = 0;
@@ -184,9 +192,11 @@ export const useFirestore = () => {
       });
       
       console.log(`${type} count incremented successfully to ${newTotal}`);
+      
       return newTotal;
     } catch (error) {
-      console.error('Error updating document count:', error);
+      console.error("Error updating document count:", error);
+      
       return -1;
     }
   };

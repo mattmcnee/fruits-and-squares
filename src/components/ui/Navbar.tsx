@@ -63,7 +63,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className='navbar-page-spacing'>
+    <div className="navbar-page-spacing">
       <div className="navbar-container">
         <nav className="navbar">
           <div className="navbar-logo" onClick={() => navigate("/")}>
