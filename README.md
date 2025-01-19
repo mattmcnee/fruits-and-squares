@@ -39,7 +39,21 @@ Finally, the marked crosses are removed and the game board is complete.
 
 ## Setup information
 
-The project is built in Vite using React and TypeScript.
+The project is built in Vite using React and TypeScript. To run locally, clone the repository, open it, and run:
+
+```
+npm install
+```
+
+then
+
+```
+npm run dev
+```
+
+The application will run without environment variables configured. However, you will not be able to sign in, access the database or save game scores.
+
+If you wish to make your own full version of this you will need to create a new Firebase project.
 
 ## LinkedIn authentication for Firebase
 
