@@ -13,6 +13,7 @@ export const useFirestore = () => {
 
     if (!boardString) {
       console.warn("Empty board passed to saveGameObject");
+      
       return null;
     }
       
@@ -154,6 +155,7 @@ export const useFirestore = () => {
       const newGame = await generateNewGameBoard(type);
       if (!newGame || !newGame.board) { 
         console.warn("generateNewGameBoard has returned a null board");  
+        
         return null;
       }
       const doc = await saveGameObject(type, newGame.board);

@@ -29,7 +29,8 @@ const gridDirections = [
 
 export const getColorName = (color: string) => {
   const foundColor = colors.find((c) => c.color === color);
-  return foundColor ? foundColor.name.toLowerCase() : 'unknown';
+  
+  return foundColor ? foundColor.name.toLowerCase() : "unknown";
 };
 
 // Empty board where each cell is #fff (white)
@@ -257,15 +258,15 @@ export const validateBoard = (board: BeansBoard) => {
     return {
       valid: true,
       completed: true,
-      message: 'Congratulations! You have solved the puzzle',
+      message: "Congratulations! You have solved the puzzle",
     };
   } else {
     return {
       valid: true,
       completed: false,
-      message: '', // No message shown when valid but not exactly 10 beans
+      message: "", // No message shown when valid but not exactly 10 beans
     };
   }
-}
+};
 
   
