@@ -1,12 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import bananaIcon from "/src/assets/banana.svg";
 import mangoIcon from "/src/assets/mango.svg";
 import crossIcon from "/src/assets/tiny-cross.svg";
 import equalsIcon from "/src/assets/tiny-equals.svg";
+import refreshIcon from "/src/assets/refresh.svg";
+import forwardsIcon from "/src/assets/skip-forward.svg";
 
 import { createEmptyBoard, validateBoard } from "./mangoUtils";
+import { TertiaryIconButton, PrimaryButton } from "@components/ui/Buttons";
 
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { MangoBoard, GameState } from "@utils/types";
 import { formatTimer } from "@components/games/gameUtils";
 
@@ -20,11 +23,15 @@ interface MangoGameProps {
 
 const MangoGame = ({ board, index, gameState, puzzleComplete, startPuzzle }: MangoGameProps) => {
   const [playableBoard, setPlayableBoard] = useState<MangoBoard>(createEmptyBoard());
+  const [initialBoard, setInitialBoard] = useState<MangoBoard>(createEmptyBoard());
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (board) {
       setAlertState({ valid: true, message: "" });
       setPlayableBoard(board);
+      setInitialBoard(JSON.parse(JSON.stringify(board))); // Create a deep copy of the board
     } 
   }, [board]);
 
@@ -32,6 +39,13 @@ const MangoGame = ({ board, index, gameState, puzzleComplete, startPuzzle }: Man
     valid: true,
     message: "",
   });
+
+  const resetBoard = useCallback(() => {
+    setPlayableBoard(JSON.parse(JSON.stringify(initialBoard)));
+
+    const isValid = validateBoard(initialBoard);
+    setAlertState({ valid: isValid.valid, message: isValid.message });
+  }, [initialBoard]);
 
   const handleCellClick = (rowIndex: number, colIndex: number) => {
     const newBoard = [...playableBoard];
@@ -61,19 +75,27 @@ const MangoGame = ({ board, index, gameState, puzzleComplete, startPuzzle }: Man
 
   return (
     <div className="game-container">
-      <h1 className="game-title">Mango {index ? `#${index}` : ""}</h1>
+      <div className="game-header">
+        <TertiaryIconButton onClick={resetBoard}>
+          <img src={refreshIcon} alt="refresh" />
+        </TertiaryIconButton>
+        <h1 className="game-title">Mango {index ? `#${index}` : ""}</h1>
+        <TertiaryIconButton onClick={() => navigate("/mango/new")}>
+          <img src={forwardsIcon} alt="refresh" />
+        </TertiaryIconButton>
+      </div>
       <div className="game-timer">{formatTimer(gameState.timer)}</div>
       <div className="game-board mango">
         <div className={`game-board-overlay ${gameState.playing ? "hidden" : ""}`}>
           {gameState.completed ? ( 
             <>
               <div className="overlay-text">Completed in {formatTimer(gameState.timer)}</div>
-              <Link to="/mango/new" className="overlay-button">Play another</Link>
+              <PrimaryButton onClick={() => navigate("/mango/new")}>Play another</PrimaryButton>
             </>
           ) : (
             <>
               <div className="overlay-text">Are you ready?</div>
-              <button onClick={startPuzzle} className="overlay-button">Play Mango</button>
+              <PrimaryButton onClick={startPuzzle} className="overlay-button">Play Mango</PrimaryButton>
             </>
           )}
         </div>

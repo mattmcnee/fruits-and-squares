@@ -33,13 +33,13 @@ export const getGameBoard = async (type: string, ref: string, user: User | null)
   if (ref === "new") {
     if (!user) {
       const game = await generateNewGameBoard(type, false);
-      console.log("Generated new game:", game);
+      console.log("Generated game without saving:", game);
       return game;
     } else {
       // This will create a game using generateNewGameBoard if:
       // the user's previous game reference is the most recent game created
       const game = await getNextGameForUser(type, user.uid);
-      console.log("Retrieved game:", game);
+      console.log("Retrieved game or generated and saved:", game);
       return game;
 
     }

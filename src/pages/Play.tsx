@@ -40,6 +40,11 @@ const Play = ({ type }: PlayProps) => {
   const { addPlayerScoreToGame, updateUserLastGame } = useFirestore();
 
   const fetchGame = async (ref: string, user: User | null) => {
+    if (ref === "unsaved"){
+      navigate(`/${type}/new`, { replace: true });
+      return;
+    } 
+
     const game = await getGameBoard(type, ref, user);
     if (!game) {
       console.warn("Game not found");
