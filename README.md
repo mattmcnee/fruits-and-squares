@@ -1,10 +1,10 @@
 # Fruits and Squares
 
-A collection of randomly generated fruit puzzle games. Users can sign in via LinkedIn to compare scores on the top games or play endless games without an account.
+A collection of randomly generated fruit puzzle games, available at [fruitsandsquares.com](https://fruitsandsquares.com/). Users can sign in via LinkedIn to compare scores on the top games or play endless games without an account.
 
-Mango is a 6x6 grid filled with bananas and mangos, following a similar ruleset to LinkedIn's [Tango](https://www.linkedin.com/showcase/tango-game/), except there may be more than one valid solution.
+[Mango](https://fruitsandsquares.com/mango/new) is a 6x6 grid filled with bananas and mangos, following a similar ruleset to LinkedIn's [Tango](https://www.linkedin.com/showcase/tango-game/), except there may be more than one valid solution.
 
-Beans is a 10x10 grid, divided in 10 areas, following a similar ruleset to LinkedIn's [Queens](https://www.linkedin.com/showcase/queens-game/), except there may be more than one valid solution.
+[Beans](https://fruitsandsquares.com/beans/new) is a 10x10 grid, divided in 10 areas, following a similar ruleset to LinkedIn's [Queens](https://www.linkedin.com/showcase/queens-game/), except there may be more than one valid solution.
 
 ## How do the games generate?
 
