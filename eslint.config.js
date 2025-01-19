@@ -29,6 +29,7 @@ export default [
       "newline-before-return": "error",
       quotes: ["error", "double"],
       semi: ["error", "always"],
+      "jsx-quotes": ["error", "prefer-double"],
     },
   },
 ];
