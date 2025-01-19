@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { createEmptyBeansBoard, validateBoard } from "./beansUtils";
 import { BeansBoard, GameState } from "@utils/types";
 import refreshIcon from "@assets/refresh.svg";
@@ -14,14 +14,22 @@ interface BeansGameProps {
   gameState: GameState;
   puzzleComplete: () => void;
   startPuzzle: () => void;
+  skipPuzzle: () => void;
 }
 
-const BeansGame = ({ board, index, gameState, puzzleComplete, startPuzzle }: BeansGameProps)  => {
+const BeansGame = ({ board, index, gameState, puzzleComplete, startPuzzle, skipPuzzle }: BeansGameProps)  => {
   const [playableBoard, setPlayableBoard] = useState<BeansBoard>(createEmptyBeansBoard());
   const [initialBoard, setInitialBoard] = useState<BeansBoard>(createEmptyBeansBoard());
   const [alertState, setAlertState] = useState({ valid: true, message: "" });
 
   const navigate = useNavigate();
+
+  const resetBoard = useCallback(() => {
+    setPlayableBoard(JSON.parse(JSON.stringify(initialBoard)));
+
+    const isValid = validateBoard(initialBoard);
+    setAlertState({ valid: isValid.valid, message: isValid.message });
+  }, [initialBoard]);
 
   useEffect(() => {
     if (board) {
@@ -57,15 +65,14 @@ const BeansGame = ({ board, index, gameState, puzzleComplete, startPuzzle }: Bea
     setPlayableBoard(newBoard);
   };
 
-
   return (
     <div className="game-container">
       <div className="game-header">
-        <TertiaryIconButton onClick={() => alert("Refresh")}>
+        <TertiaryIconButton onClick={resetBoard}>
           <img src={refreshIcon} alt="refresh" />
         </TertiaryIconButton>
         <h1 className="game-title">Beans {index ? `#${index}` : ""}</h1>
-        <TertiaryIconButton onClick={() => navigate("/beans/new")}>
+        <TertiaryIconButton onClick={skipPuzzle}>
           <img src={forwardsIcon} alt="refresh" />
         </TertiaryIconButton>
       </div>

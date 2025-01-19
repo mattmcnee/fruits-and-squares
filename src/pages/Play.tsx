@@ -50,6 +50,7 @@ const Play = ({ type }: PlayProps) => {
       return;
     } 
 
+
     const game = await getGameBoard(type, ref, user);
     if (!game) {
       console.warn("Game not found");
@@ -57,7 +58,7 @@ const Play = ({ type }: PlayProps) => {
       return;
     }
 
-    console.log("Game fetched:", game); 
+    // console.log("Game fetched:", game); 
 
     setGameObject(game);
 
@@ -119,6 +120,11 @@ const Play = ({ type }: PlayProps) => {
     }
   }, [user, ref, gameState]);
 
+  const skipPuzzle = useCallback(async (type: string) => {
+    if (user && ref) await updateUserLastGame(type, user.uid, ref);
+    navigate(`/${type}/new`);
+  }, [ref,  user]);
+
   // Set the grid size based on the window size
   useEffect(() => {
     const handleResize = () => {
@@ -166,6 +172,7 @@ const Play = ({ type }: PlayProps) => {
         gameState={gameState} 
         puzzleComplete={puzzleComplete} 
         startPuzzle={startPuzzle}
+        skipPuzzle={() => skipPuzzle(type)}
       />}
 
       {type === "beans" && isBeansBoard(gameObject.board) && <BeansGame
@@ -174,6 +181,7 @@ const Play = ({ type }: PlayProps) => {
         gameState={gameState}
         puzzleComplete={puzzleComplete}
         startPuzzle={startPuzzle}
+        skipPuzzle={() => skipPuzzle(type)}
       />}
     </div>
   );

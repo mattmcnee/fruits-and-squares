@@ -13,8 +13,8 @@ export const generateNewGameBoard = async (type: string, save = true): Promise<G
     board = generateMangoBoard();
   } else if (type === "beans") {
     board = generateBeansBoard();
-    console.log("Generated beans board:", board);
   } else{
+    console.warn("Invalid game type in generateNewGameBoard, returning null");
     board = null;
   }
 
@@ -38,14 +38,12 @@ export const getGameBoard = async (type: string, ref: string, user: User | null)
   if (ref === "new") {
     if (!user) {
       const game = await generateNewGameBoard(type, false);
-      console.log("Generated game without saving:", game);
       
       return game;
     } else {
       // This will create a game using generateNewGameBoard if:
       // the user's previous game reference is the most recent game created
       const game = await getNextGameForUser(type, user.uid);
-      console.log("Retrieved game or generated and saved:", game);
       
       return game;
 
@@ -53,8 +51,7 @@ export const getGameBoard = async (type: string, ref: string, user: User | null)
 
   } else {
     const game = await getGameObject(type, ref);
-    console.log("Retrieved game:", game);
-    
+
     return game;
   }
 };

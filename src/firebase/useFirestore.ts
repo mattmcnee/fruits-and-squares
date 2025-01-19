@@ -1,5 +1,5 @@
 import app from "./config";
-import { doc, setDoc, getFirestore, getDoc, serverTimestamp, collection, query, orderBy, limit, getDocs, startAfter, runTransaction } from "firebase/firestore";
+import { doc, setDoc, getFirestore, getDoc, collection, query, orderBy, limit, getDocs, startAfter, runTransaction } from "firebase/firestore";
 import SHA1 from "crypto-js/sha1";
 import { GameDoc, GameBoard } from "@utils/types";
 import { generateNewGameBoard } from "@components/games/gameUtils";
@@ -10,6 +10,12 @@ export const useFirestore = () => {
   const saveGameObject = async (type: string, board: GameBoard) => {
     const boardString = JSON.stringify(board);
     const boardHash = SHA1(boardString).toString();
+
+    if (!boardString) {
+      console.warn("Empty board passed to saveGameObject");
+      return null;
+    }
+      
 
     // Check if the document already exists
     const docRef = doc(db, type, boardHash);
@@ -29,10 +35,17 @@ export const useFirestore = () => {
 
     const index = await incrementDocumentCount(type);
 
-    const newDoc = { board: boardString, players: [], createdAt: serverTimestamp(), index };
+    const newDoc = { board: boardString, players: [], createdAt: new Date(), index };
     await setDoc(docRef, newDoc);
 
-    return { isNew: true, ref: boardHash, doc: newDoc};
+    return { 
+      isNew: true, 
+      ref: boardHash, 
+      board,
+      players: newDoc.players,
+      createdAt: newDoc.createdAt,
+      index
+    } as GameDoc;
   };
 
   const getGameObject = async (type: string, boardHash: string) => {
@@ -67,21 +80,15 @@ export const useFirestore = () => {
 
     // Get the user's last game type and reference
     const userData = userDocSnap.data();
-    const lastGameRef = userData.previous?.[type];
+    let lastGameRef = userData.previous?.[type];
+    if (lastGameRef === "new") lastGameRef = null;
     let nextGame;
 
     if (lastGameRef) {
-      console.log(`User's last game reference: ${lastGameRef}`);
       nextGame = await getNextOldestGame(type, lastGameRef);
     } else {
-      console.warn("User has no last game reference");
       nextGame =  await getNextOldestGame(type);
     }
-
-    // Update the user's last game reference
-    // if (nextGame) {
-    //   await setDoc(userDocRef, { ...userData, previous: { ...userData.previous, [type]: nextGame.ref } });
-    // }
 
     return nextGame;
   };
@@ -145,9 +152,8 @@ export const useFirestore = () => {
 
     if (querySnapshot.empty) {
       const newGame = await generateNewGameBoard(type);
-      if (!newGame) {
-        console.error("Failed to generate new game board");
-        
+      if (!newGame || !newGame.board) { 
+        console.warn("generateNewGameBoard has returned a null board");  
         return null;
       }
       const doc = await saveGameObject(type, newGame.board);
@@ -190,8 +196,6 @@ export const useFirestore = () => {
           transaction.update(countRef, { total: newTotal });
         }
       });
-      
-      console.log(`${type} count incremented successfully to ${newTotal}`);
       
       return newTotal;
     } catch (error) {

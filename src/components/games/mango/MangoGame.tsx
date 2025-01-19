@@ -16,9 +16,10 @@ interface MangoGameProps {
   gameState: GameState;
   puzzleComplete: () => void;
   startPuzzle: () => void;
+  skipPuzzle: () => void;
 }
 
-const MangoGame = ({ board, index, gameState, puzzleComplete, startPuzzle }: MangoGameProps) => {
+const MangoGame = ({ board, index, gameState, puzzleComplete, startPuzzle, skipPuzzle }: MangoGameProps) => {
   const [playableBoard, setPlayableBoard] = useState<MangoBoard>(createEmptyMangoBoard());
   const [initialBoard, setInitialBoard] = useState<MangoBoard>(createEmptyMangoBoard());
 
@@ -77,7 +78,7 @@ const MangoGame = ({ board, index, gameState, puzzleComplete, startPuzzle }: Man
           <img src={refreshIcon} alt="refresh" />
         </TertiaryIconButton>
         <h1 className="game-title">Mango {index ? `#${index}` : ""}</h1>
-        <TertiaryIconButton onClick={() => navigate("/mango/new")}>
+        <TertiaryIconButton onClick={skipPuzzle}>
           <img src={forwardsIcon} alt="refresh" />
         </TertiaryIconButton>
       </div>
