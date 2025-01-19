@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { colors, createEmptyBeansBoard } from './beansUtils';
 import { BeansBoard, GameState } from '@utils/types';
-import beanIcon from '/src/assets/bean.svg';
-import crossIcon from '/src/assets/tiny-cross.svg';
+
 import { useNavigate } from "react-router-dom";
+import BeansSquare from './BeansSquare';
 
 interface BeansGameProps {
   board: BeansBoard | null;
@@ -28,10 +28,6 @@ const BeansGame = ({ board, index, gameState, puzzleComplete, startPuzzle }: Bea
       } 
     }, [board]);
   
-
-
-
-
   const handleCellClick = (rowIndex: number, colIndex: number) => {
     // Create a copy of the board to modify the clicked cell
     const newBoard = [...playableBoard];
@@ -67,35 +63,7 @@ const BeansGame = ({ board, index, gameState, puzzleComplete, startPuzzle }: Bea
       <div className="game-board bean">
         {playableBoard.map((row, rowIndex) =>
           row.map((cell, colIndex) => (
-            <div
-              key={`${rowIndex}-${colIndex}`}
-              onClick={() => handleCellClick(rowIndex, colIndex)}
-              className="game-cell bean"
-              style={{
-                backgroundColor: cell.color || '#000',
-                borderBottom: rowIndex === 9 ? '1px solid #000' : 'none',
-                borderRight: colIndex === 9 ? '1px solid #000' : 'none',
-                borderTopRightRadius: rowIndex === 0 && colIndex === 9 ? '5px' : '0',
-                borderBottomRightRadius: rowIndex === 9 && colIndex === 9 ? '5px' : '0',
-                borderTopLeftRadius: rowIndex === 0 && colIndex === 0 ? '5px' : '0',
-                borderBottomLeftRadius: rowIndex === 9 && colIndex === 0 ? '5px' : '0',
-              }}
-            >
-              {cell.hasCross && (
-                <div
-                  className="cell-marker"
-                >
-                  <img className="cell-img" src={crossIcon}></img>
-                </div>
-              )}
-              {cell.hasBean && (
-                <div
-                  className="cell-marker"
-                >
-                  <img className="cell-img" src={beanIcon}></img>
-                </div>
-              )}
-            </div>
+            <BeansSquare key={`${rowIndex}-${colIndex}`} cell={cell} rowIndex={rowIndex} colIndex={colIndex} handleCellClick={handleCellClick} />
           ))
         )}
       </div>
