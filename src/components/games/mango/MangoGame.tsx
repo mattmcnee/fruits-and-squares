@@ -87,17 +87,20 @@ const MangoGame = ({ board, index, gameState, puzzleComplete, startPuzzle }: Man
       <div className="game-timer">{formatTimer(gameState.timer)}</div>
       <div className="game-board mango">
         <div className={`game-board-overlay ${gameState.playing ? "hidden" : ""}`}>
-          {gameState.completed ? ( 
+          {gameState.loading ? (
+            <div>Loading</div>
+          ) : (
+            gameState.completed ? ( 
             <>
               <div className="overlay-text">Completed in {formatTimer(gameState.timer)}</div>
-              <PrimaryButton onClick={() => navigate("/mango/new")}>Play another</PrimaryButton>
+              <PrimaryButton onClick={() => navigate("/mango/new")} className="overlay-button">Play another</PrimaryButton>
             </>
           ) : (
             <>
               <div className="overlay-text">Are you ready?</div>
               <PrimaryButton onClick={startPuzzle} className="overlay-button">Play Mango</PrimaryButton>
             </>
-          )}
+          ))}
         </div>
         {playableBoard && playableBoard.map((row: typeof playableBoard[0], rowIndex) =>
           row.map((cell, colIndex) => (

@@ -8,11 +8,17 @@ export type MangoBoard = {
 
 export type MangoDoc = {
   board: MangoBoard;
-  players: string[];
+  players: GameScore[];
   createdAt: Date;
   index: number;
   ref?: string;
   isNew?: boolean;
+}
+
+export type GameScore = {
+  uid: string;
+  time: number;
+  playedAt: Date;
 }
 
 export type MangoKey = "hasBanana" | "hasMango";
@@ -21,5 +27,6 @@ export type GameState = {
   timer: number;
   playing: boolean;
   completed: boolean;
+  loading: boolean;
 }
 

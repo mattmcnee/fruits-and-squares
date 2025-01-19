@@ -101,19 +101,19 @@ export const useFirestore = () => {
     const docSnap = await getDoc(docRef);
 
     const userData = {
+      uid,
       time,
+      playedAt: new Date(),
     }
 
     if (docSnap.exists()) {
       const data = docSnap.data();
-      const players = data.players || {};
-      let totalPlayers = data.totalPlayers || 0;
+      const players = data.players || [];
+      const playerExists = players.some((player: { uid: string }) => player.uid === uid);
 
-      // Check if the player already exists
-      if (!players[uid]) {
-        players[uid] = userData;
-        totalPlayers += 1;
-        await setDoc(docRef, { ...data, players, totalPlayers });
+      if (!playerExists) {
+        players.push(userData);
+        await setDoc(docRef, { ...data, players });
       } else {
         console.warn("User has already logged a time for this game");
       }

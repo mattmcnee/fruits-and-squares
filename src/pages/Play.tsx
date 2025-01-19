@@ -25,6 +25,7 @@ const Play = ({ type }: PlayProps) => {
     timer: 0,
     playing: false,
     completed: false,
+    loading: true,
   });
 
   const gameList = ["beans", "mango"];
@@ -40,6 +41,7 @@ const Play = ({ type }: PlayProps) => {
   const { addPlayerScoreToGame, updateUserLastGame } = useFirestore();
 
   const fetchGame = async (ref: string, user: User | null) => {
+    // Don't want to pass in ref "unsaved" as it will try to load from firestore
     if (ref === "unsaved"){
       navigate(`/${type}/new`, { replace: true });
       return;
@@ -55,20 +57,30 @@ const Play = ({ type }: PlayProps) => {
 
     setGameObject(game);
 
-    if (ref === "new") {
-      navigate(`/${type}/${game.ref}`, { replace: true });
-    }
+    // If at /new, redirect to the new game's ref
+    if (ref === "new") navigate(`/${type}/${game.ref}`, { replace: true });
 
     // Reset and start the timer
-    if (timerRef.current) {
-      clearInterval(timerRef.current);
-    }
+    if (timerRef.current) clearInterval(timerRef.current);
 
-    setGameState({
-      timer: 0,
-      playing: false,
-      completed: false,
-    });
+    let record = null;
+    if (user) record = game.players.find(player => player.uid === user.uid);
+
+    if (user && record) {
+      setGameState({
+        timer: record.time,
+        playing: false,
+        completed: true,
+        loading: false,
+      });
+    } else {
+      setGameState({
+        timer: 0,
+        playing: false,
+        completed: false,
+        loading: false,
+      });
+    }
   }
 
   const startPuzzle = () => {
@@ -79,6 +91,7 @@ const Play = ({ type }: PlayProps) => {
       timer: 0,
       playing: true,
       completed: false,
+      loading: false,
     });
 
     timerRef.current = setInterval(() => {
