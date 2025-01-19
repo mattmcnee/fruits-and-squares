@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useAuth } from "@firebase/useAuth";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@components/ui/Navbar";
-import AuthButton from "@components/ui/AuthButton";
+import { AuthLinkedInButton } from "@components/ui/Buttons";
 
 const LinkedInLogin = () => {
   const { user, authenticateWithLinkedIn } = useAuth();
@@ -18,7 +18,9 @@ const LinkedInLogin = () => {
     <>
       <Navbar />
       <div className="page-body centered">
-        <AuthButton onClick={authenticateWithLinkedIn} />
+        <AuthLinkedInButton onClick={authenticateWithLinkedIn}>
+          Continue with LinkedIn
+        </AuthLinkedInButton>
       </div>
     </>
   );
