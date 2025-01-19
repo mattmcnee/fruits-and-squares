@@ -1,19 +1,15 @@
-import useFirestore from "@firebase/useFirestore";
 import { useState, useEffect } from "react";
+import BarChart from "@components/graphs/BarChart";
+import dummyData from '@components/graphs/dummy-scores.json'
 
 const Test = () => {
-  const { getNextGameForUser } = useFirestore();
-  
-  const [gameData, setGameData] = useState<any | null>(null);
 
-  useEffect(() => {
-    getNextGameForUser("mango", "fIr3kVTu2L").then(data => setGameData(data));
-  }, []);
 
   return (
-    <div>
-      <h1>Test</h1>
-      {gameData && <pre>{JSON.stringify(gameData, null, 2)}</pre>}
+    <div style={{padding: "20px"}}>
+      <div style={{maxWidth: "300px", margin: "0 auto"}}>
+        <BarChart scoresData={dummyData} userId="kLmNoPqRsT"/>
+      </div>
     </div>
   );
 };
