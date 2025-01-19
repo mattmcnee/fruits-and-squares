@@ -87,6 +87,7 @@ export function useAuth() {
         console.warn("Firebase auth is not initialized");
         hasWarnedRef.current = true;
       }
+      
       return;
     }
 
@@ -124,6 +125,7 @@ export function useAuth() {
         console.warn("Firebase auth is not initialized");
         hasWarnedRef.current = true;
       }
+      
       return { status: "error", code: "auth-not-initialized" };
     }
 
