@@ -1,10 +1,12 @@
-export type MangoBoard = {
+export type MangoBoard = MangoCell[][];
+
+export type MangoCell = {
   hasBanana: boolean;
   hasMango: boolean;
   hasRight: { exists: boolean; isEquals: boolean; };
   hasBottom: { exists: boolean; isEquals: boolean; };
   isFixed: boolean;
-}[][];
+}
 
 export type MangoDoc = {
   board: MangoBoard;
