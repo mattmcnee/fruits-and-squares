@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import refreshIcon from "/src/assets/refresh.svg";
 import forwardsIcon from "/src/assets/skip-forward.svg";
 
-import { createEmptyBoard, validateBoard } from "./mangoUtils";
+import { createEmptyMangoBoard, validateBoard } from "./mangoUtils";
 import { TertiaryIconButton, PrimaryButton } from "@components/ui/Buttons";
 
 import { useNavigate } from "react-router-dom";
@@ -19,8 +19,8 @@ interface MangoGameProps {
 }
 
 const MangoGame = ({ board, index, gameState, puzzleComplete, startPuzzle }: MangoGameProps) => {
-  const [playableBoard, setPlayableBoard] = useState<MangoBoard>(createEmptyBoard());
-  const [initialBoard, setInitialBoard] = useState<MangoBoard>(createEmptyBoard());
+  const [playableBoard, setPlayableBoard] = useState<MangoBoard>(createEmptyMangoBoard());
+  const [initialBoard, setInitialBoard] = useState<MangoBoard>(createEmptyMangoBoard());
 
   const navigate = useNavigate();
 

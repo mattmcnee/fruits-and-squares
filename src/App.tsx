@@ -15,6 +15,7 @@ function App() {
         <Route path="/signin" element={<Signin />} />
         <Route path="/signin/success" element={<SigninSuccess />} />
         <Route path="/mango/:ref" element={<Play type={"mango"} />} />
+        <Route path="/beans/:ref" element={<Play type={"beans"} />} />
         <Route path="*" element={<Home/>} />
       </Routes>
     </Router>

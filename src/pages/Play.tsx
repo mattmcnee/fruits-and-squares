@@ -1,10 +1,12 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import MangoGame from "@components/games/mango/MangoGame";
+import BeansGame from "@components/games/beans/BeansGame";
 import Navbar from "@components/ui/Navbar";
 import "@components/games/Games.scss";
 import { getGameBoard, createEmptyGameBoard } from "@components/games/gameUtils";
 import { useNavigate, useParams } from "react-router-dom";
-import { GameState, MangoDoc } from "@utils/types";
+import { GameState, GameDoc } from "@utils/types";
+import { isBeansBoard, isMangoBoard } from "@utils/typeguards";
 import useAuth from "@firebase/useAuth";
 import useFirestore from "@firebase/useFirestore";
 import { User } from "firebase/auth";
@@ -30,7 +32,7 @@ const Play = ({ type }: PlayProps) => {
 
   const gameList = ["beans", "mango"];
   
-  const [gameObject, setGameObject] = useState<MangoDoc>({
+  const [gameObject, setGameObject] = useState<GameDoc>({
     board: createEmptyGameBoard(type),
     players: [],
     createdAt: new Date(),
@@ -158,12 +160,19 @@ const Play = ({ type }: PlayProps) => {
   return (
     <div className="game-page">
       <Navbar />
-      {/* <button onClick={() => puzzleComplete()} className="back-button">Hello</button> */}
-      {type === "mango" && <MangoGame 
+      {type === "mango" && isMangoBoard(gameObject.board) && <MangoGame 
         board={gameObject.board} 
         index={gameObject.index}
         gameState={gameState} 
         puzzleComplete={puzzleComplete} 
+        startPuzzle={startPuzzle}
+      />}
+
+      {type === "beans" && isBeansBoard(gameObject.board) && <BeansGame
+        board={gameObject.board}
+        index={gameObject.index}
+        gameState={gameState}
+        puzzleComplete={puzzleComplete}
         startPuzzle={startPuzzle}
       />}
     </div>

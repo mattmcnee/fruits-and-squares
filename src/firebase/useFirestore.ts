@@ -1,13 +1,13 @@
 import app from "./config";
 import { doc, setDoc, getFirestore, getDoc, serverTimestamp, collection, query, orderBy, limit, getDocs, startAfter, runTransaction } from "firebase/firestore";
 import SHA1 from "crypto-js/sha1";
-import { MangoBoard, MangoDoc } from "@utils/types";
+import { GameDoc, GameBoard } from "@utils/types";
 import { generateNewGameBoard } from "@components/games/gameUtils";
 
 export const useFirestore = () => {
   const db = getFirestore(app);
 
-  const saveGameObject = async (type: string, board: MangoBoard) => {
+  const saveGameObject = async (type: string, board: GameBoard) => {
     const boardString = JSON.stringify(board);
     const boardHash = SHA1(boardString).toString();
 
@@ -24,7 +24,7 @@ export const useFirestore = () => {
         players: data.players, 
         createdAt: data.createdAt, 
         index: data.index 
-      } as MangoDoc;
+      } as GameDoc;
     }
 
     const index = await incrementDocumentCount(type);
@@ -48,7 +48,7 @@ export const useFirestore = () => {
         players: data.players, 
         createdAt: data.createdAt, 
         index: data.index 
-      } as MangoDoc;
+      } as GameDoc;
     }
 
     return null;
@@ -124,7 +124,7 @@ export const useFirestore = () => {
     }
   };
 
-  const getNextOldestGame = async (type: string, ref?: string): Promise<MangoDoc | null> => {
+  const getNextOldestGame = async (type: string, ref?: string): Promise<GameDoc | null> => {
     const gamesRef = collection(db, type);
     let q;
 
@@ -152,7 +152,7 @@ export const useFirestore = () => {
       }
       const doc = await saveGameObject(type, newGame.board);
       
-      return doc as MangoDoc;
+      return doc as GameDoc;
     }
 
     const nextOldestGame = querySnapshot.docs[0];
@@ -164,7 +164,7 @@ export const useFirestore = () => {
       players: data.players, 
       createdAt: data.createdAt, 
       index: data.index 
-    } as MangoDoc;
+    } as GameDoc;
   };
 
 

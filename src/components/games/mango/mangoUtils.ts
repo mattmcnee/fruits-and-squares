@@ -3,7 +3,7 @@ import { MangoBoard, MangoKey } from "@utils/types";
 const size = 6;
 const maxAttempts = 1000;
 
-export const createEmptyBoard = (): MangoBoard =>
+export const createEmptyMangoBoard = (): MangoBoard =>
   Array.from({ length: size }, () =>
     Array.from({ length: size }, () => ({
       hasBanana: false,
@@ -92,7 +92,7 @@ const chooseFruit = (board: MangoBoard, row: number, col: number) => {
 };
 
 const tryGenerateBoard = () => {
-  const board = createEmptyBoard();
+  const board = createEmptyMangoBoard();
   let unfilledCells = generateAllCells();
 
   while (unfilledCells.length > 0) {

@@ -1,16 +1,20 @@
-import { generateMangoBoard, createEmptyBoard } from "@components/games/mango/mangoUtils";
-import { MangoBoard, MangoDoc } from "@utils/types";
+import { generateMangoBoard, createEmptyMangoBoard } from "@components/games/mango/mangoUtils";
+import { createEmptyBeansBoard } from "@components/games/beans/beansUtils";
+import { GameBoard, GameDoc } from "@utils/types";
 import { useFirestore } from "@firebase/useFirestore";
 import { User } from "firebase/auth";
 
 
-export const generateNewGameBoard = async (type: string, save = true): Promise<MangoDoc | null> => {
+export const generateNewGameBoard = async (type: string, save = true): Promise<GameDoc | null> => {
   const { saveGameObject } = useFirestore();
-  let board: MangoBoard | null = null;
+  let board: GameBoard | null = null;
 
   if (type === "mango") {
     board = generateMangoBoard();
-  } else {
+  } else if (type === "beans") {
+    board = createEmptyBeansBoard();
+    console.log("Generated beans board:", board);
+  } else{
     board = null;
   }
 
@@ -21,12 +25,12 @@ export const generateNewGameBoard = async (type: string, save = true): Promise<M
   }
 
   if (!save) {
-    return { ref: "unsaved", board } as MangoDoc;
+    return { ref: "unsaved", board } as GameDoc;
   }
 
   const doc = await saveGameObject(type, board);
 
-  return doc as MangoDoc;
+  return doc as GameDoc;
 };
 
 export const getGameBoard = async (type: string, ref: string, user: User | null) => {
@@ -68,9 +72,11 @@ export const formatTimer = (time: number) => {
 };
 
 export const createEmptyGameBoard = (type: string) => {
-  if (type !== "mango") console.warn ("Invalid game type");
-  
-  return createEmptyBoard();
+  if (type == "mango") return createEmptyMangoBoard();
+  if (type == "beans") return createEmptyBeansBoard();
+    
+  console.warn ("Invalid game type, creating empty mango board");
+  return createEmptyMangoBoard();
 };
 
 
