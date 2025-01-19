@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { colors, createEmptyBeansBoard } from "./beansUtils";
+import { createEmptyBeansBoard, validateBoard } from "./beansUtils";
 import { BeansBoard, GameState } from "@utils/types";
 import refreshIcon from "@assets/refresh.svg";
 import forwardsIcon from "@assets/skip-forward.svg";
@@ -46,19 +46,13 @@ const BeansGame = ({ board, index, gameState, puzzleComplete, startPuzzle }: Bea
       clickedCell.hasBean = false;
     }
 
-    // Update the alert state based on the current board state
-    updateAlertState(newBoard, rowIndex, colIndex, clickedCell.color);
+    const { valid, message } = validateBoard(newBoard);
+    setAlertState({ valid, message });
 
     // Set the new board state
     setPlayableBoard(newBoard);
   };
 
-  const updateAlertState = (board: BeansBoard, rowIndex: number, colIndex: number, color: string) => {
-    const { valid, message } = {valid: true, message: ""};
-    console.log(valid, message);
-    setAlertState({ valid, message });
-
-  };
 
   return (
     <div className="game-container">

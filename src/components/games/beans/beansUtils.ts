@@ -27,6 +27,11 @@ const gridDirections = [
   [0, -1], [0, 1], // Left, Right
 ];
 
+export const getColorName = (color: string) => {
+  const foundColor = colors.find((c) => c.color === color);
+  return foundColor ? foundColor.name.toLowerCase() : 'unknown';
+};
+
 // Empty board where each cell is #fff (white)
 export const createEmptyBeansBoard = () =>
   Array.from({ length: size }, () =>
@@ -176,5 +181,85 @@ export const generateBeansBoard = () => {
 
   return null;
 };
+
+export const validateBoard = (board: BeansBoard) => {
+  // Check each row for more than one 'hasBean'
+  for (let rowIndex = 0; rowIndex < board.length; rowIndex++) {
+    const rowHasBeanCount = board[rowIndex].filter(cell => cell.hasBean).length;
+    if (rowHasBeanCount > 1) {
+      return {
+        valid: false,
+        message: `Row ${rowIndex + 1} has more than one bean`,
+      };
+    }
+  }
+
+  // Check each column for more than one 'hasBean'
+  for (let colIndex = 0; colIndex < board[0].length; colIndex++) {
+    const colHasBeanCount = board.reduce(
+      (count, row) => (row[colIndex].hasBean ? count + 1 : count),
+      0
+    );
+    if (colHasBeanCount > 1) {
+      return {
+        valid: false,
+        message: `Column ${colIndex + 1} has more than one bean`,
+      };
+    }
+  }
+
+  // Check each color section for more than one 'hasBean'
+  const colorHasBeanCount: { [key: string]: number } = {};
+  for (const cell of board.flat()) {
+    if (cell.hasBean) {
+      if (!colorHasBeanCount[cell.color]) {
+        colorHasBeanCount[cell.color] = 0;
+      }
+      colorHasBeanCount[cell.color]++;
+      if (colorHasBeanCount[cell.color] > 1) {
+        return {
+          valid: false,
+          message: `The ${getColorName(cell.color)} section has more than one bean`,
+        };
+      }
+    }
+  }
+
+  for (let rowIndex = 0; rowIndex < board.length; rowIndex++) {
+    for (let colIndex = 0; colIndex < board[rowIndex].length; colIndex++) {
+      if (board[rowIndex][colIndex].hasBean) {
+        for (const [dx, dy] of directions) {
+          const newRow = rowIndex + dx;
+          const newCol = colIndex + dy;
+          if (
+            newRow >= 0 && newRow < 10 &&
+            newCol >= 0 && newCol < 10 &&
+            board[newRow][newCol].hasBean
+          ) {
+            return {
+              valid: false,
+              message: `Adjacent beans found at (${rowIndex + 1}, ${colIndex + 1}) and (${newRow + 1}, ${newCol + 1})`,
+            };
+          }
+        }
+      }
+    }
+  }
+
+  // Count total `hasBean` cells on the board
+  const totalHasBeans = board.flat().filter(cell => cell.hasBean).length;
+
+  if (totalHasBeans === 10) {
+    return {
+      valid: true,
+      message: 'Congratulations! You have solved the puzzle',
+    };
+  } else {
+    return {
+      valid: true,
+      message: '', // No message shown when valid but not exactly 10 beans
+    };
+  }
+}
 
   
