@@ -6,12 +6,13 @@ Mango is a 6x6 grid filled with bananas and mangos, following a similar ruleset 
 
 Beans is a 10x10 grid, divided in 10 areas, following a similar ruleset to LinkedIn's [Queens](https://www.linkedin.com/showcase/queens-game/), except there may be more than one valid solution.
 
+## How do the games generate?
 
-## Mango generation logic
+The logic to generate the games was put together in a short timeframe and has much potential for improvement. It is, however, sufficient to generate and infinite number of games, each with instant generation.
 
-First we consider only the constraints on fruits positioning to generate a valid arrangement:
-- Only 3 of each fruit per row and per column
-- No more than 2 consecutive fruits in any row or column
+### Mango generation logic
+
+First we consider only the constraints on fruits positioning to generate a valid arrangement: only 3 of each fruit per row and per column and no more than 2 consecutive fruits in any row or column
 
 To fill the board, we repeatedly select a random square and check if adding either fruit would result in a valid board state. If only one fruit is valid, that fruit is added. If both are valid, the fruit that is on the board the least is added.
 
@@ -22,6 +23,19 @@ Once we have a valid arrangement of fruits, we add the + and = signs in random p
 Then we select 12 random cells that are not next to a + or = and set them to fixed. A maximum of two fixed cells per row or column is allowed.
 
 Finally, the fruits in any cells that aren't fixed are removed and the game board is complete.
+
+### Beans generation logic
+
+First we consider only the contraints on bean positioning to generate a valid arrangement:
+only one bean per row and column and no beans within the eight squares surrounding any other beans.
+
+To fill the board, we iterate through each row, and randomly select a column to place the bean. If this column is not valid, we retry up to 10 times. If no valid column can be found, we retry board generation up to 1,000 times.
+
+Now we have a valid arrangement of beans. For each bean, we pick a random adjacent square and set that to the same colour as the bean, ensuring at least two of each colour.
+
+After this, we iterate through the cells of the board multiple times. Any time we find a square with colour, we set a random one of its neighbours to the same colour. This is done until the board is full.
+
+Finally, the marked crosses are removed and the game board is complete.
 
 ## Setup information
 
