@@ -1,5 +1,5 @@
 import { generateMangoBoard, createEmptyMangoBoard } from "@components/games/mango/mangoUtils";
-import { createEmptyBeansBoard } from "@components/games/beans/beansUtils";
+import { generateBeansBoard, createEmptyBeansBoard } from "@components/games/beans/beansUtils";
 import { GameBoard, GameDoc } from "@utils/types";
 import { useFirestore } from "@firebase/useFirestore";
 import { User } from "firebase/auth";
@@ -12,7 +12,7 @@ export const generateNewGameBoard = async (type: string, save = true): Promise<G
   if (type === "mango") {
     board = generateMangoBoard();
   } else if (type === "beans") {
-    board = createEmptyBeansBoard();
+    board = generateBeansBoard();
     console.log("Generated beans board:", board);
   } else{
     board = null;
