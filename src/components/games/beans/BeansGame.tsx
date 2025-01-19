@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react';
-import { colors, createEmptyBeansBoard } from './beansUtils';
-import { BeansBoard, GameState } from '@utils/types';
-import refreshIcon from '@assets/refresh.svg';
-import forwardsIcon from '@assets/skip-forward.svg';
-import { TertiaryIconButton } from '@components/ui/Buttons';
+import { useState, useEffect } from "react";
+import { colors, createEmptyBeansBoard } from "./beansUtils";
+import { BeansBoard, GameState } from "@utils/types";
+import refreshIcon from "@assets/refresh.svg";
+import forwardsIcon from "@assets/skip-forward.svg";
+import { TertiaryIconButton } from "@components/ui/Buttons";
 import { formatTimer } from "@components/games/gameUtils";
 import { useNavigate } from "react-router-dom";
-import BeansSquare from './BeansSquare';
+import BeansSquare from "./BeansSquare";
 
 interface BeansGameProps {
   board: BeansBoard | null;
@@ -19,17 +19,17 @@ interface BeansGameProps {
 const BeansGame = ({ board, index, gameState, puzzleComplete, startPuzzle }: BeansGameProps)  => {
   const [playableBoard, setPlayableBoard] = useState<BeansBoard>(createEmptyBeansBoard());
   const [initialBoard, setInitialBoard] = useState<BeansBoard>(createEmptyBeansBoard());
-  const [alertState, setAlertState] = useState({ valid: true, message: '' });
+  const [alertState, setAlertState] = useState({ valid: true, message: "" });
 
   const navigate = useNavigate();
 
-    useEffect(() => {
-      if (board) {
-        setAlertState({ valid: true, message: "" });
-        setPlayableBoard(board);
-        setInitialBoard(JSON.parse(JSON.stringify(board))); // Create a deep copy of the board
-      } 
-    }, [board]);
+  useEffect(() => {
+    if (board) {
+      setAlertState({ valid: true, message: "" });
+      setPlayableBoard(board);
+      setInitialBoard(JSON.parse(JSON.stringify(board))); // Create a deep copy of the board
+    } 
+  }, [board]);
   
   const handleCellClick = (rowIndex: number, colIndex: number) => {
     // Create a copy of the board to modify the clicked cell
@@ -54,7 +54,7 @@ const BeansGame = ({ board, index, gameState, puzzleComplete, startPuzzle }: Bea
   };
 
   const updateAlertState = (board: BeansBoard, rowIndex: number, colIndex: number, color: string) => {
-    const { valid, message } = {valid: true, message: ''};
+    const { valid, message } = {valid: true, message: ""};
     console.log(valid, message);
     setAlertState({ valid, message });
 
@@ -83,9 +83,9 @@ const BeansGame = ({ board, index, gameState, puzzleComplete, startPuzzle }: Bea
         <div
           className="game-alert"
           style={{
-            backgroundColor: alertState.valid ? '#d4edda' : '#f8d7da',
-            color: alertState.valid ? '#155724' : '#721c24',
-            border: `1px solid ${alertState.valid ? '#c3e6cb' : '#f5c6cb'}`,
+            backgroundColor: alertState.valid ? "#d4edda" : "#f8d7da",
+            color: alertState.valid ? "#155724" : "#721c24",
+            border: `1px solid ${alertState.valid ? "#c3e6cb" : "#f5c6cb"}`,
           }}
         >
           {alertState.message}
@@ -95,7 +95,7 @@ const BeansGame = ({ board, index, gameState, puzzleComplete, startPuzzle }: Bea
           className="game-alert"
         >
         One bean per row, column and colour
-      </div>
+        </div>
       )}
     </div>
   );

@@ -4,16 +4,16 @@ const size = 10;
 const maxAttempts = 1000;
 
 export const colors = [
-  { color: '#96beff', name: 'Blue' },
-  { color: '#b3dfa0', name: 'Green' },
-  { color: '#dfdfdf', name: 'Grey' },
-  { color: '#dfa0bf', name: 'Pink' },
-  { color: '#ff7b60', name: 'Red' },
-  { color: '#e6f388', name: 'Yellow' },
-  { color: '#b9b29e', name: 'Dark grey' },
-  { color: '#a3d2d8', name: 'Turquoise' },
-  { color: '#ffc992', name: 'Salmon' },
-  { color: '#bba3e2', name: 'Purple' }
+  { color: "#96beff", name: "Blue" },
+  { color: "#b3dfa0", name: "Green" },
+  { color: "#dfdfdf", name: "Grey" },
+  { color: "#dfa0bf", name: "Pink" },
+  { color: "#ff7b60", name: "Red" },
+  { color: "#e6f388", name: "Yellow" },
+  { color: "#b9b29e", name: "Dark grey" },
+  { color: "#a3d2d8", name: "Turquoise" },
+  { color: "#ffc992", name: "Salmon" },
+  { color: "#bba3e2", name: "Purple" }
 ];
 
 export const directions = [
@@ -41,6 +41,7 @@ const isSafeToPlaceCross = (board: BeansBoard, row: number, col:number) => {
   return directions.every(([dx, dy]) => {
     const newRow = row + dx;
     const newCol = col + dy;
+    
     return (
       newRow < 0 || newRow >= size || // Out of bounds
       newCol < 0 || newCol >= size || // Out of bounds
@@ -120,7 +121,6 @@ const removeCrosses = (board: BeansBoard) => {
   );
 };
 
-
 export const tryGenerateBoard = () => {
   const board = createEmptyBeansBoard();
 
@@ -157,7 +157,7 @@ export const tryGenerateBoard = () => {
   }
 
   return board;
-}
+};
 
 export const generateBeansBoard = () => {
   let attempts = 0;
@@ -167,13 +167,14 @@ export const generateBeansBoard = () => {
     if (board) {
       board = colorAdjacentSquares(board);
       board = fillBoardWithColor(board);
-      // board = removeCrosses(board);
+      board = removeCrosses(board);
+      
       return board;
     }
     attempts++;
   }
 
   return null;
-}
+};
 
   

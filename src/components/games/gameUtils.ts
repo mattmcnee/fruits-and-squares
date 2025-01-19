@@ -76,6 +76,7 @@ export const createEmptyGameBoard = (type: string) => {
   if (type == "beans") return createEmptyBeansBoard();
     
   console.warn ("Invalid game type, creating empty mango board");
+  
   return createEmptyMangoBoard();
 };
 

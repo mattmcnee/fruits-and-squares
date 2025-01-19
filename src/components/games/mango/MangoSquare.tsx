@@ -2,7 +2,7 @@ import bananaIcon from "/src/assets/banana.svg";
 import mangoIcon from "/src/assets/mango.svg";
 import crossIcon from "/src/assets/tiny-cross.svg";
 import equalsIcon from "/src/assets/tiny-equals.svg";
-import { MangoCell } from '@utils/types';
+import { MangoCell } from "@utils/types";
 
 interface MangoSquareProps {
   cell: MangoCell;

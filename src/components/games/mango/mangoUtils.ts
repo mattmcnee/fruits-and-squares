@@ -200,7 +200,6 @@ export const generateMangoBoard = () => {
   return null;
 };
 
-
 // Validate a give board state
 
 const validateBanana = (board: MangoBoard, row: number, col: number) => {

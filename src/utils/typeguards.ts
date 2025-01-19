@@ -30,7 +30,7 @@ export const isBeansCell = (cell: any): cell is BeansCell => {
     typeof cell.color === "string" &&
     ["hasCross", "hasBean"].every(key => typeof cell[key] === "boolean" || cell[key] === null)
   );
-}
+};
 
 export const isBeansBoard = (board: GameBoard): board is BeansBoard => {
   if (!Array.isArray(board)) return false;
