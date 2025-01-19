@@ -3,7 +3,7 @@ import { createEmptyBeansBoard, validateBoard } from "./beansUtils";
 import { BeansBoard, GameState } from "@utils/types";
 import refreshIcon from "@assets/refresh.svg";
 import forwardsIcon from "@assets/skip-forward.svg";
-import { TertiaryIconButton } from "@components/ui/Buttons";
+import { TertiaryIconButton, PrimaryButton } from "@components/ui/Buttons";
 import { formatTimer } from "@components/games/gameUtils";
 import { useNavigate } from "react-router-dom";
 import BeansSquare from "./BeansSquare";
@@ -46,8 +46,12 @@ const BeansGame = ({ board, index, gameState, puzzleComplete, startPuzzle }: Bea
       clickedCell.hasBean = false;
     }
 
-    const { valid, message } = validateBoard(newBoard);
+    const { valid, message, completed } = validateBoard(newBoard);
     setAlertState({ valid, message });
+
+    if (completed) {
+      puzzleComplete();
+    }
 
     // Set the new board state
     setPlayableBoard(newBoard);
@@ -67,6 +71,22 @@ const BeansGame = ({ board, index, gameState, puzzleComplete, startPuzzle }: Bea
       </div>
       <div className="game-timer">{formatTimer(gameState.timer)}</div>
       <div className="game-board bean">
+        <div className={`game-board-overlay ${gameState.playing ? "hidden" : ""}`}>
+          {gameState.loading ? (
+            <div>Loading</div>
+          ) : (
+            gameState.completed ? ( 
+              <>
+                <div className="overlay-text">Completed in {formatTimer(gameState.timer)}</div>
+                <PrimaryButton onClick={() => navigate("/beans/new")} className="overlay-button">Play another</PrimaryButton>
+              </>
+            ) : (
+              <>
+                <div className="overlay-text">Are you ready?</div>
+                <PrimaryButton onClick={startPuzzle} className="overlay-button">Play Beans</PrimaryButton>
+              </>
+            ))}
+        </div>
         {playableBoard.map((row, rowIndex) =>
           row.map((cell, colIndex) => (
             <BeansSquare key={`${rowIndex}-${colIndex}`} cell={cell} rowIndex={rowIndex} colIndex={colIndex} handleCellClick={handleCellClick} />

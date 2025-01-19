@@ -189,6 +189,7 @@ export const validateBoard = (board: BeansBoard) => {
     if (rowHasBeanCount > 1) {
       return {
         valid: false,
+        completed: false,
         message: `Row ${rowIndex + 1} has more than one bean`,
       };
     }
@@ -203,6 +204,7 @@ export const validateBoard = (board: BeansBoard) => {
     if (colHasBeanCount > 1) {
       return {
         valid: false,
+        completed: false,
         message: `Column ${colIndex + 1} has more than one bean`,
       };
     }
@@ -219,6 +221,7 @@ export const validateBoard = (board: BeansBoard) => {
       if (colorHasBeanCount[cell.color] > 1) {
         return {
           valid: false,
+          completed: false,
           message: `The ${getColorName(cell.color)} section has more than one bean`,
         };
       }
@@ -238,6 +241,7 @@ export const validateBoard = (board: BeansBoard) => {
           ) {
             return {
               valid: false,
+              completed: false,
               message: `Adjacent beans found at (${rowIndex + 1}, ${colIndex + 1}) and (${newRow + 1}, ${newCol + 1})`,
             };
           }
@@ -252,11 +256,13 @@ export const validateBoard = (board: BeansBoard) => {
   if (totalHasBeans === 10) {
     return {
       valid: true,
+      completed: true,
       message: 'Congratulations! You have solved the puzzle',
     };
   } else {
     return {
       valid: true,
+      completed: false,
       message: '', // No message shown when valid but not exactly 10 beans
     };
   }
