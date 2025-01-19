@@ -12,10 +12,24 @@ interface SignInResponse {
   code: string;
 }
 
+const hasWarnedRef = { current: false };
+
 export function useAuth() {
-  const auth = getAuth(app);
+
+  // Forgiving auth initialization: if config is missing warn once and return null
+  let auth;
+  try {
+    auth = getAuth(app);
+  } catch (error) {
+    if (!hasWarnedRef.current) {
+      console.warn("Firebase config is missing or invalid:", error);
+      hasWarnedRef.current = true;
+    }
+    auth = null;
+  }
+
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(auth ? true : false);
   const DEV_MODE = import.meta.env.MODE === "development";
 
   const REDIRECT_URI = DEV_MODE 
@@ -27,6 +41,8 @@ export function useAuth() {
 
   // Listen for auth state changes and set state accordingly
   useEffect(() => {
+    if (!auth) return;
+
     const unsubscribe = auth.onAuthStateChanged((currentUser) => {
       setUser(currentUser);
       setLoading(false);
@@ -37,6 +53,11 @@ export function useAuth() {
   }, [auth]);
 
   const getTokenFromCode = async (code: string): Promise<string | null> => {
+    if (!FUNCTION_URL) {
+      console.warn("Function URL is missing");
+      
+      return null;
+    }
 
     try {
       const response = await fetch(`${FUNCTION_URL}/linkedinAuth`, {
@@ -61,6 +82,14 @@ export function useAuth() {
   };
 
   const signInWithCode = async (code: string): Promise<void> => {
+    if (!auth) {
+      if (!hasWarnedRef.current) {
+        console.warn("Firebase auth is not initialized");
+        hasWarnedRef.current = true;
+      }
+      return;
+    }
+
     const token = await getTokenFromCode(code);
     if (!token) {
       console.warn("Error fetching token from code");
@@ -78,13 +107,26 @@ export function useAuth() {
 
   const authenticateWithLinkedIn = async (): Promise<void> => {
     const CLIENT_ID = import.meta.env.VITE_LINKEDIN_CLIENT_ID;
-    const AUTH_URL = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&scope=openid%20profile%20email`;
+    if (!CLIENT_ID || !REDIRECT_URI) {
+      console.warn("LinkedIn client ID or redirect URI missing");
+      
+      return;
+    }
 
+    const AUTH_URL = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&scope=openid%20profile%20email`;
     window.location.href = AUTH_URL;
   };
 
   // Logout user
   const logout = async (): Promise<SignInResponse> => {
+    if (!auth) {
+      if (!hasWarnedRef.current) {
+        console.warn("Firebase auth is not initialized");
+        hasWarnedRef.current = true;
+      }
+      return { status: "error", code: "auth-not-initialized" };
+    }
+
     try {
       await signOut(auth);
       setUser(null);
