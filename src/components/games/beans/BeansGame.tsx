@@ -3,13 +3,11 @@ import { createEmptyBeansBoard, validateBoard } from "./beansUtils";
 import { BeansBoard, GameState, GameScore } from "@utils/types";
 import refreshIcon from "@assets/refresh.svg";
 import forwardsIcon from "@assets/skip-forward.svg";
-import { TertiaryIconButton, PrimaryButton } from "@components/ui/Buttons";
+import timerIcon from "@assets/timer.svg";
+import { TertiaryIconButton } from "@components/ui/Buttons";
 import { formatTimer } from "@components/games/gameUtils";
-import { useNavigate } from "react-router-dom";
 import BeansSquare from "./BeansSquare";
-
-import BarChart from "@components/graphs/BarChart";
-import useAuth from "@firebase/useAuth";
+import GameOverlay from "../GameOverlay";
 
 interface BeansGameProps {
   board: BeansBoard | null;
@@ -26,9 +24,6 @@ const BeansGame = ({ board, index, players, gameState, puzzleComplete, startPuzz
   const [playableBoard, setPlayableBoard] = useState<BeansBoard>(createEmptyBeansBoard());
   const [initialBoard, setInitialBoard] = useState<BeansBoard>(createEmptyBeansBoard());
   const [alertState, setAlertState] = useState({ valid: true, message: "" });
-
-  const navigate = useNavigate();
-  const { user } = useAuth();
 
   const resetBoard = useCallback(() => {
     setPlayableBoard(JSON.parse(JSON.stringify(initialBoard)));
@@ -82,27 +77,14 @@ const BeansGame = ({ board, index, players, gameState, puzzleComplete, startPuzz
           <img src={forwardsIcon} alt="refresh" />
         </TertiaryIconButton>
       </div>
-      <div className="game-timer">{formatTimer(gameState.timer)}</div>
-      <div className="game-board bean">
-        <div className={`game-board-overlay ${gameState.playing ? "hidden" : ""}`}>
-          {gameState.loading ? (
-            <div>Loading</div>
-          ) : (
-            gameState.completed ? ( 
-              <>
-                {user && (
-                  <BarChart scoresData={players} userId={user.uid}/>
-                )}
-                <div className="overlay-text">Completed in {formatTimer(gameState.timer)}</div>
-                <PrimaryButton onClick={() => navigate("/beans/new")} className="overlay-button">Play another</PrimaryButton>
-              </>
-            ) : (
-              <>
-                <div className="overlay-text">Are you ready?</div>
-                <PrimaryButton onClick={startPuzzle} className="overlay-button">Play Beans</PrimaryButton>
-              </>
-            ))}
+      <div className="game-timer">
+        <img src={timerIcon} alt="timer" className="game-timer-icon"/>
+        <div className="game-timer-text">
+          {formatTimer(gameState.timer)}
         </div>
+      </div>
+      <div className="game-board bean">
+        <GameOverlay players={players} type="beans" gameState={gameState} startPuzzle={startPuzzle}/>
         {playableBoard.map((row, rowIndex) =>
           row.map((cell, colIndex) => (
             <BeansSquare key={`${rowIndex}-${colIndex}`} cell={cell} rowIndex={rowIndex} colIndex={colIndex} handleCellClick={handleCellClick} />

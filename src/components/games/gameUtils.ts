@@ -1,6 +1,6 @@
 import { generateMangoBoard, createEmptyMangoBoard } from "@components/games/mango/mangoUtils";
 import { generateBeansBoard, createEmptyBeansBoard } from "@components/games/beans/beansUtils";
-import { GameBoard, GameDoc } from "@utils/types";
+import { GameBoard, GameDoc, GameScore } from "@utils/types";
 import { useFirestore } from "@firebase/useFirestore";
 import { User } from "firebase/auth";
 
@@ -75,6 +75,78 @@ export const createEmptyGameBoard = (type: string) => {
   console.warn ("Invalid game type, creating empty mango board");
   
   return createEmptyMangoBoard();
+};
+
+export const generatePerformanceGraph = (userId: string, scoresData: GameScore[]) => {
+
+  const MAX_GRAPH_TIME = 300; // 5 minutes
+  const RESOLUTION = 24;
+
+  const times = scoresData.map(item => item.time);
+  const minTime = Math.min(...times);
+  let maxTime = Math.min(Math.max(...times), MAX_GRAPH_TIME); // Cap maxTime to 5 minutes (300 seconds)
+
+  // Display a maximum of 5 minutes on the graph
+  if (maxTime - minTime < RESOLUTION) {
+    maxTime = minTime + RESOLUTION;
+  }
+
+  const interval = (maxTime - minTime) / RESOLUTION;
+
+  const formatTime = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    
+    return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
+  };
+
+  const labels = Array.from({ length: RESOLUTION }, (_, i) => formatTime(Math.round(minTime + i * interval)));
+
+  const totalDataCount = scoresData.length;
+  const dataCounts = Array(RESOLUTION).fill(0);
+  const userBarIndex = new Set<number>();
+  let userTime = 0;
+
+  scoresData.forEach(item => {
+    let index;
+    if (item.time >= MAX_GRAPH_TIME) {
+      index = RESOLUTION - 1;
+    } else {
+      index = Math.min(Math.floor((item.time - minTime) / interval), RESOLUTION - 1);
+    }
+    dataCounts[index]++;
+    if (item.uid === userId) {
+      userBarIndex.add(index);
+      userTime = item.time;
+    }
+  });
+
+  const percentageDataCounts = dataCounts.map(count => (count / totalDataCount) * 100);
+  const userPercentage = (scoresData.filter(item => item.time < userTime).length / totalDataCount) * 100;
+  const userRoundedPercentage = Math.max(Math.round(userPercentage / 5) * 5, 5); // Round to nearest 5, with a minimum of 5
+
+  let userPerformance = `You are in the top ${userRoundedPercentage}% of players`;
+
+  const graphData = {
+    labels,
+    datasets: [
+      {
+        label: "Time Intervals",
+        data: percentageDataCounts,
+        backgroundColor: percentageDataCounts.map((_, index) =>
+          userBarIndex.has(index) ? "rgba(54, 162, 235, 1)" : "rgba(255, 99, 132, 1)"
+        ),
+        borderRadius: 12,
+        order: 1,
+      },
+    ],
+  };
+
+  if (scoresData.length === 1) {
+    userPerformance = "You are the first to play this game";
+  }
+
+  return { graphData, userPerformance };
 };
 
 

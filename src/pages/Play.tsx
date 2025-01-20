@@ -58,7 +58,7 @@ const Play = ({ type }: PlayProps) => {
       return;
     }
 
-    // console.log("Game fetched:", game); 
+    console.log("Game fetched:", game); 
 
     setGameObject(game);
 

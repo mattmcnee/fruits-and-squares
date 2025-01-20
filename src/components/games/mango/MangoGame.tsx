@@ -1,17 +1,15 @@
 import { useEffect, useState, useCallback } from "react";
 import refreshIcon from "/src/assets/refresh.svg";
 import forwardsIcon from "/src/assets/skip-forward.svg";
+import timerIcon from "/src/assets/timer.svg";
 
 import { createEmptyMangoBoard, validateBoard } from "./mangoUtils";
-import { TertiaryIconButton, PrimaryButton } from "@components/ui/Buttons";
+import { TertiaryIconButton } from "@components/ui/Buttons";
 
-import { useNavigate } from "react-router-dom";
 import { MangoBoard, GameState, GameScore } from "@utils/types";
 import { formatTimer } from "@components/games/gameUtils";
 import MangoSquare from "./MangoSquare";
-
-import BarChart from "@components/graphs/BarChart";
-import useAuth from "@firebase/useAuth";
+import GameOverlay from "../GameOverlay";
 
 interface MangoGameProps {
   board: MangoBoard | null;
@@ -26,9 +24,6 @@ interface MangoGameProps {
 const MangoGame = ({ board, index, players, gameState, puzzleComplete, startPuzzle, skipPuzzle }: MangoGameProps) => {
   const [playableBoard, setPlayableBoard] = useState<MangoBoard>(createEmptyMangoBoard());
   const [initialBoard, setInitialBoard] = useState<MangoBoard>(createEmptyMangoBoard());
-
-  const navigate = useNavigate();
-  const { user } = useAuth();
 
   useEffect(() => {
     if (board) {
@@ -87,27 +82,14 @@ const MangoGame = ({ board, index, players, gameState, puzzleComplete, startPuzz
           <img src={forwardsIcon} alt="refresh" />
         </TertiaryIconButton>
       </div>
-      <div className="game-timer">{formatTimer(gameState.timer)}</div>
-      <div className="game-board mango">
-        <div className={`game-board-overlay ${gameState.playing ? "hidden" : ""}`}>
-          {gameState.loading ? (
-            <div>Loading</div>
-          ) : (
-            gameState.completed ? ( 
-              <>
-                {user && (
-                  <BarChart scoresData={players} userId={user.uid}/>
-                )}
-                <div className="overlay-text">Completed in {formatTimer(gameState.timer)}</div>
-                <PrimaryButton onClick={() => navigate("/mango/new")} className="overlay-button">Play another</PrimaryButton>
-              </>
-            ) : (
-              <>
-                <div className="overlay-text">Are you ready?</div>
-                <PrimaryButton onClick={startPuzzle} className="overlay-button">Play Mango</PrimaryButton>
-              </>
-            ))}
+      <div className="game-timer">
+        <img src={timerIcon} alt="timer" className="game-timer-icon"/>
+        <div className="game-timer-text">
+          {formatTimer(gameState.timer)}
         </div>
+      </div>
+      <div className="game-board mango">
+        <GameOverlay players={players} type="mango" gameState={gameState} startPuzzle={startPuzzle}/>
         {playableBoard && playableBoard.map((row: typeof playableBoard[0], rowIndex) =>
           row.map((cell, colIndex) => (
             <MangoSquare
