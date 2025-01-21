@@ -11,3 +11,14 @@
     height: calc(100vh - 140px);
   }
 }
+
+.cards-container{
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+.inline-text{
+  display: inline-flex;
+}

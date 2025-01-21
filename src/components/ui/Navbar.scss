@@ -42,6 +42,7 @@
   .navbar-links {
     display: flex;
     gap: 30px;
+    align-items: center;
   }
 
   .navbar-link {
@@ -50,11 +51,19 @@
     font-weight: bold;
     transition: transform 0.2s ease;
     cursor: pointer;
+    display: flex;
+    align-items: center;
 
     &:hover{
       transform: scale(1.05);
     }
 
+  }
+
+  .navbar-icon{
+    height: 32px;
+    width: 32px;
+    border-radius: 50%;
   }
 
   .menu-toggle {

@@ -18,6 +18,7 @@ const GameOverlay = ({gameState, type, players, startPuzzle}: GameOverlayProps) 
   const { user } = useAuth();
   const [data, setData] = useState<any| null>(null);
   const [performance, setPerformance] = useState<string | null>(null);
+  const gameName = type.charAt(0).toUpperCase() + type.slice(1);
 
   useEffect(() => {
     if (user && (gameState.timer > 0 || players.length > 0)) {
@@ -40,11 +41,6 @@ const GameOverlay = ({gameState, type, players, startPuzzle}: GameOverlayProps) 
     }
   }, [user, gameState, players, type]);
 
-
-
-
-
-
   return(
 
     <div className={`game-board-overlay ${gameState.playing ? "hidden" : ""}`}>
@@ -66,7 +62,7 @@ const GameOverlay = ({gameState, type, players, startPuzzle}: GameOverlayProps) 
         ) : (
           <div className="overlay-menu">
             <div className="overlay-text">Are you ready?</div>
-            <PrimaryButton onClick={startPuzzle} className="overlay-button">Play Mango</PrimaryButton>
+            <PrimaryButton onClick={startPuzzle} className="overlay-button">Play {gameName}</PrimaryButton>
           </div>
         ))}
     </div>
