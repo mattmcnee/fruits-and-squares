@@ -69,11 +69,11 @@ const BeansGame = ({ board, index, players, gameState, puzzleComplete, startPuzz
   return (
     <div className="game-container">
       <div className="game-header">
-        <TertiaryIconButton onClick={resetBoard}>
+        <TertiaryIconButton onClick={resetBoard} className="no-select">
           <img src={refreshIcon} alt="refresh" />
         </TertiaryIconButton>
         <h1 className="game-title">Beans {index ? `#${index}` : ""}</h1>
-        <TertiaryIconButton onClick={skipPuzzle}>
+        <TertiaryIconButton onClick={skipPuzzle} className="no-select">
           <img src={forwardsIcon} alt="refresh" />
         </TertiaryIconButton>
       </div>

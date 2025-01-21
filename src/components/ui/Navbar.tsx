@@ -69,12 +69,12 @@ const Navbar = () => {
     <div className="navbar-page-spacing">
       <div className="navbar-container">
         <nav className="navbar">
-          <div className="navbar-logo" onClick={() => navigate("/")}>
+          <div className="navbar-logo no-select" onClick={() => navigate("/")}>
             <img src={beanIcon} alt="Logo" />
             <div className="logo-name">{title}</div>
           </div>
           {isMobile ? (
-            <button className="menu-toggle" onClick={toggleMenu}>
+            <button className="menu-toggle no-select" onClick={toggleMenu}>
               <img src={menuIcon} alt="Toggle Menu Icon" />
             </button>
           ) : (

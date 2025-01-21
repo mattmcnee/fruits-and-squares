@@ -11,7 +11,7 @@ const GameCard = ({ type }: GameCardProps) => {
   const gameName = type.charAt(0).toUpperCase() + type.slice(1);
 
   return (
-    <Link to={`/${type}/new`}>
+    <Link to={`/${type}/new`} className="no-select">
       <div className="game-card">
         <img className={`game-card-img ${type}`} src={type === "mango" ? mangoIcon : beansIcon} alt={`${type} Icon`} />
         <div className="game-card-details">

@@ -42,14 +42,14 @@ const Home = () => {
 
         <p>To finish the game, every square must contain either a mango or a banana.</p>
         <p>There must be the same number of mangoes and bananas in each row and column.</p>
-        <p>No more than 2 mangoes or bananas may be next to each other, either vertically or horizontally.</p>
+        <p>No more than 2 mangoes or bananas can be next to each other, either vertically or horizontally.</p>
         <p>Cells separated by an = sign must be of the same type and cells separated by an x sign must be of the opposite type.</p>
         <p>There may be more than one valid answer and the game will accept any valid solution.</p>
 
         <h2>Beans rules</h2>
         <p>To finish the game, ten beans must be placed, each in their own row, column and colour.</p>
         <p>Beans cannot be directly next to other beans, either vertically, horizontally or diagonally.</p>
-        <p>Places where a bean cannot be placed may be marked with and x.</p>
+        <p>Places where a bean cannot be placed may be marked with an x.</p>
         <p>There may be more than one valid answer and the game will accept any valid solution.</p>
 
         <h2>About This Application</h2>
