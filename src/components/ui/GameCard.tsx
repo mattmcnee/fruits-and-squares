@@ -12,17 +12,17 @@ const GameCard = ({ type }: GameCardProps) => {
 
   return (
     <Link to={`/${type}/new`}>
-    <div className="game-card">
-      <img className={`game-card-img ${type}`} src={type === "mango" ? mangoIcon : beansIcon} alt={`${type} Icon`} />
-      <div className="game-card-details">
-        <h2>{gameName}</h2>
-        {type === "mango" ? (
-          <p>Place the same number of mangoes and bananas in every row and column</p>
-        ) : (
-          <p>Place ten beans with only one in each row, column, and coloured region</p>
-        )}
+      <div className="game-card">
+        <img className={`game-card-img ${type}`} src={type === "mango" ? mangoIcon : beansIcon} alt={`${type} Icon`} />
+        <div className="game-card-details">
+          <h2>{gameName}</h2>
+          {type === "mango" ? (
+            <p>Place the same number of mangoes and bananas in every row and column</p>
+          ) : (
+            <p>Place ten beans with only one in each row, column, and coloured region</p>
+          )}
+        </div>
       </div>
-    </div>
     </Link>
   );
 };

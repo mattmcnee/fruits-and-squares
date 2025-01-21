@@ -14,8 +14,6 @@ const Navbar = () => {
   const { user, logout } = useAuth();
   let title = "Fruits & Squares";
 
-  console.log(user);
-
   useEffect(() => {
     const handleResize = () => {
       const newIsMobile = window.innerWidth <= 768;
@@ -55,8 +53,8 @@ const Navbar = () => {
 
         {user ? (
           <>
-          <div className="navbar-link" onClick={() => { setIsMenuOpen(false); logout(); }}>Sign Out</div>
-          {user?.photoURL && <div className="navbar-link"><img src={user.photoURL} className="navbar-icon" alt="Profile Icon" /></div>}
+            <div className="navbar-link" onClick={() => { setIsMenuOpen(false); logout(); }}>Sign Out</div>
+            {user?.photoURL && <div className="navbar-link"><img src={user.photoURL} className="navbar-icon" alt="Profile Icon" /></div>}
           </>
         ) : (
           !(location.pathname === "/signin" || location.pathname === "/signin/success") && (

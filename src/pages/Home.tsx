@@ -14,18 +14,18 @@ const Home = () => {
       <Navbar />
       <div className="page-body">
         {user ? (
-        <>
-          <h1>Welcome back {user.displayName}</h1>
-          <p>We'll save your scores as you play</p>
-        </>
+          <>
+            <h1>Welcome back {user.displayName}</h1>
+            <p>We'll save your scores as you play</p>
+          </>
         ) : (
-        <>
-          <h1>Welcome to Fruits & Squares</h1>
-          <p>
-            <ClickableText className="inline-text" onClick={() => navigate("/signin")}>Sign in </ClickableText>
-            <span> to save your scores or play infinite random games without an account</span>
-          </p>
-        </>
+          <>
+            <h1>Welcome to Fruits & Squares</h1>
+            <p>
+              <ClickableText className="inline-text" onClick={() => navigate("/signin")}>Sign in </ClickableText>
+              <span> to save your scores or play infinite random games without an account</span>
+            </p>
+          </>
         )}
 
         <br/>
