@@ -129,7 +129,7 @@ const Play = ({ type }: PlayProps) => {
   useEffect(() => {
     const handleResize = () => {
       const MAX_SIZE = 600;
-      const scale = Math.min(Math.min(window.innerWidth, window.innerHeight - 190) - 60, MAX_SIZE);
+      const scale = Math.min(Math.min(window.innerWidth, window.innerHeight - 196) - 60, MAX_SIZE);
       document.documentElement.style.setProperty("--grid-size", `${scale}px`);
     };
 
