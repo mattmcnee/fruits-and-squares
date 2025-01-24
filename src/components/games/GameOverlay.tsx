@@ -21,7 +21,7 @@ const GameOverlay = ({gameState, type, players, startPuzzle}: GameOverlayProps) 
   const gameName = type.charAt(0).toUpperCase() + type.slice(1);
 
   useEffect(() => {
-    if (user && (gameState.timer > 0 || players.length > 0)) {
+    if (user && gameState.completed && (gameState.timer > 0 || players.length > 0)) {
       // The players array contains the scores in Firestore
       // The user may have finished the game after these were loaded
       // In that case, we add their score to the array
